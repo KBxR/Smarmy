@@ -1,0 +1,121 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { ActivityType } = require('discord.js');
+const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+
+// Map between status type and ActivityType
+const activityTypeMap = {
+    Playing: ActivityType.Playing,
+    Watching: ActivityType.Watching,
+    Streaming: ActivityType.Streaming,
+    Listening: ActivityType.Listening
+};
+
+module.exports = {
+    category: 'admin',
+    data: new SlashCommandBuilder()
+        .setName('updatebot')
+        .setDescription('Update the bot\'s avatar, username, or status.')
+        .addStringOption(option =>
+            option.setName('type')
+                .setDescription('The type of update')
+                .setRequired(true)
+                .addChoices(
+                    { name: 'Avatar', value: 'avatar' },
+                    { name: 'Username', value: 'username' },
+                    { name: 'Status', value: 'status' }
+                )
+        )
+        .addStringOption(option =>
+            option.setName('value')
+                .setDescription('The new value for the selected type (URL for avatar, text for username/status)')
+        )
+        .addStringOption(option =>
+            option.setName('status_type')
+                .setDescription('The type of status (e.g., "Playing", "Watching", "Streaming", "Listening")')
+                .addChoices(
+                    { name: 'Playing', value: 'Playing' },
+                    { name: 'Watching', value: 'Watching' },
+                    { name: 'Streaming', value: 'Streaming' },
+                    { name: 'Listening', value: 'Listening' }
+                )
+        )
+        .addAttachmentOption(option =>
+            option.setName('image')
+                .setDescription('The image to set as the new avatar')
+        ),
+    async execute(interaction) {
+        const updateType = interaction.options.getString('type');
+        const newValue = interaction.options.getString('value');
+        const statusType = interaction.options.getString('status_type');
+        const image = interaction.options.getAttachment('image');
+
+        try {
+            const client = interaction.client;
+
+            if (updateType === 'avatar') {
+                if (image) {
+                    const imageUrl = image.url;
+                    const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+                    const buffer = Buffer.from(response.data, 'binary');
+                    await client.user.setAvatar(buffer);
+
+                    // Update AUTHOR_ICON_URL in embedConfig.json
+                    const configPath = path.resolve(__dirname, '../config/embedConfig.json');
+                    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                    config.AUTHOR_ICON_URL = client.user.avatarURL();
+                    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+
+                    return interaction.reply({ content: 'The bot\'s avatar has been updated.', ephemeral: true });
+                } else if (newValue) {
+                    await client.user.setAvatar(newValue);
+
+                    // Update AUTHOR_ICON_URL in embedConfig.json
+                    const configPath = path.resolve(__dirname, '../config/embedConfig.json');
+                    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                    config.AUTHOR_ICON_URL = client.user.avatarURL();
+                    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+
+                    return interaction.reply({ content: 'The bot\'s avatar has been updated.', ephemeral: true });
+                } else {
+                    return interaction.reply({ content: 'Please provide a valid URL or upload an image to update the avatar.', ephemeral: true });
+                }
+            } else if (updateType === 'username') {
+                if (!newValue) {
+                    return interaction.reply({ content: 'Please provide a new username.', ephemeral: true });
+                }
+                await client.user.setUsername(newValue);
+
+                // Update AUTHOR_NAME in embedConfig.json
+                const configPath = path.resolve(__dirname, '../config/embedConfig.json');
+                const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                config.AUTHOR_NAME = newValue;
+                fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+
+                return interaction.reply({ content: 'The bot\'s username has been updated.', ephemeral: true });
+            } else if (updateType === 'status') {
+                if (!newValue || !statusType) {
+                    return interaction.reply({ content: 'Please provide both a new status and status type.', ephemeral: true });
+                }
+
+                // Update status in embedConfig.json
+                const configPath = path.resolve(__dirname, '../config/embedConfig.json');
+                const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                config.status = {
+                    type: statusType,
+                    name: newValue
+                };
+                fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+
+                // Set the bot's presence immediately
+                client.user.setActivity(newValue, { type: activityTypeMap[statusType] });
+
+                return interaction.reply({ content: 'The bot\'s status has been updated.', ephemeral: true });
+            }
+        } catch (error) {
+            console.error('Error updating bot:', error);
+            return interaction.reply({ content: 'An error occurred while updating the bot. Please try again later.', ephemeral: true });
+        }
+    }
+};
