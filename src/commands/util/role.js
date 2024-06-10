@@ -23,6 +23,9 @@ module.exports = {
                     option.setName('hexcode')
                         .setDescription('Hex color code')
                         .setRequired(true))
+                .addAttachmentOption(option =>
+                    option.setName('icon')
+                        .setDescription('The icon image file (optional)'))
         )
         
         // Role removal subcommand
