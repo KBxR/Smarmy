@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
-const handleGuildList = require('./admininfo/list');
 const config = require('../../config');
+const handleGuildList = require('./admininfo/list');
 
 module.exports = {
     category: 'admin',

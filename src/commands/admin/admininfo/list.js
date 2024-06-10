@@ -2,9 +2,8 @@ const { MessageAttachment } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
-module.exports = {
+module.exports = async function handleGuildList(interaction) {
 
-    async execute(interaction) {
         const guilds = interaction.client.guilds.cache.map(guild => ({
             name: guild.name,
             id: guild.id,
@@ -25,5 +24,4 @@ module.exports = {
 
         // Clean up the file after sending
         fs.unlinkSync(filePath);
-    }
 };
