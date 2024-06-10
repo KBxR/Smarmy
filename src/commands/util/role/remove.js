@@ -1,10 +1,12 @@
 const { EmbedBuilder } = require('discord.js');
-const { AUTHOR_NAME, AUTHOR_ICON_URL } = require('../../config/embedConfig.json');
+const { getBotInfo } = require('../../../utils/botInfoUtil');
 
 module.exports = async function handleRoleRemove(interaction) {
     const role = interaction.options.getRole('role');
     const user = interaction.options.getUser('user');
     const member = interaction.options.getMember('user');
+    const { authorName, authorIconUrl } = await getBotInfo();
+
 
     // Remove the role from the user
     await member.roles.remove(role);
@@ -14,8 +16,8 @@ module.exports = async function handleRoleRemove(interaction) {
         .setColor(role.color)
         .setTitle(`Removed ${role.name} from ${user.username}`)
         .setAuthor({ 
-            name: AUTHOR_NAME, 
-            iconURL: AUTHOR_ICON_URL 
+            name: authorName, 
+            iconURL: authorIconUrl 
         })
         .addFields(
             { name: 'Role Name:', value: `<@&${role.id}>`, inline: false },

@@ -1,8 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { ActivityType } = require('discord.js');
 const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
+const { BotInfo } = require('../../models'); // Adjust the path as necessary
 
 // Map between status type and ActivityType
 const activityTypeMap = {
@@ -61,21 +60,17 @@ module.exports = {
                     const buffer = Buffer.from(response.data, 'binary');
                     await client.user.setAvatar(buffer);
 
-                    // Update AUTHOR_ICON_URL in embedConfig.json
-                    const configPath = path.resolve(__dirname, '../config/embedConfig.json');
-                    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-                    config.AUTHOR_ICON_URL = client.user.avatarURL();
-                    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+                    // Store avatar URL in the database
+                    const avatarUrl = client.user.avatarURL();
+                    await BotInfo.upsert({ key: 'avatar', value: avatarUrl });
 
                     return interaction.reply({ content: 'The bot\'s avatar has been updated.', ephemeral: true });
                 } else if (newValue) {
                     await client.user.setAvatar(newValue);
 
-                    // Update AUTHOR_ICON_URL in embedConfig.json
-                    const configPath = path.resolve(__dirname, '../config/embedConfig.json');
-                    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-                    config.AUTHOR_ICON_URL = client.user.avatarURL();
-                    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+                    // Store avatar URL in the database
+                    const avatarUrl = client.user.avatarURL();
+                    await BotInfo.upsert({ key: 'avatar', value: avatarUrl });
 
                     return interaction.reply({ content: 'The bot\'s avatar has been updated.', ephemeral: true });
                 } else {
@@ -87,11 +82,8 @@ module.exports = {
                 }
                 await client.user.setUsername(newValue);
 
-                // Update AUTHOR_NAME in embedConfig.json
-                const configPath = path.resolve(__dirname, '../config/embedConfig.json');
-                const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-                config.AUTHOR_NAME = newValue;
-                fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+                // Store username in the database
+                await BotInfo.upsert({ key: 'username', value: newValue });
 
                 return interaction.reply({ content: 'The bot\'s username has been updated.', ephemeral: true });
             } else if (updateType === 'status') {
@@ -99,14 +91,9 @@ module.exports = {
                     return interaction.reply({ content: 'Please provide both a new status and status type.', ephemeral: true });
                 }
 
-                // Update status in embedConfig.json
-                const configPath = path.resolve(__dirname, '../config/embedConfig.json');
-                const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-                config.status = {
-                    type: statusType,
-                    name: newValue
-                };
-                fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+                // Store status type and name in the database
+                await BotInfo.upsert({ key: 'status_type', value: statusType });
+                await BotInfo.upsert({ key: 'status_name', value: newValue });
 
                 // Set the bot's presence immediately
                 client.user.setActivity(newValue, { type: activityTypeMap[statusType] });

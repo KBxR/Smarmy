@@ -7,7 +7,7 @@ const lastFmKey = config.lastFmKey;
 module.exports = async function handleList(interaction) {
     try {
         const userID = interaction.user.id;
-        const user = await User.findByPk(userID); // Find user by ID in the database
+        const user = await User.findByPk(userID); 
 
         let username = interaction.options.getString('username');
 

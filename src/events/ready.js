@@ -1,13 +1,7 @@
-const { ActivityType,Events } = require('discord.js');
+const { ActivityType, Events } = require('discord.js');
 const io = require('socket.io')(3001); // WebSocket server on port 3001
 const { User } = require('../models'); // Import User model from models.js
-const fs = require('fs');
-const path = require('path');
-
-// Load the config
-const configPath = path.resolve(__dirname, './config.json');
-const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-const statusType = config.status.type
+const { getBotInfo } = require('../utils/botInfoUtil'); // Adjust the path as necessary
 
 module.exports = {
     name: Events.ClientReady,
@@ -20,25 +14,28 @@ module.exports = {
             Listening: ActivityType.Listening
         };
 
-        // Set the bot's activity from config
-        client.user.setActivity(config.status.name, { type: activityTypeMap[statusType] });
-
-        // Handle WebSocket connections
-        io.on('connection', (socket) => {
-            console.log('A user connected');
-            socket.on('disconnect', () => {
-                console.log('A user disconnected');
-            });
-        });
-
-        // Sync the model with the database
         try {
+            // Fetch bot info from the database
+            const { statusType, statusName } = await getBotInfo();
+
+            // Set the bot's activity from the database
+            client.user.setActivity(statusName, { type: activityTypeMap[statusType] });
+
+            // Handle WebSocket connections
+            io.on('connection', (socket) => {
+                console.log('A user connected');
+                socket.on('disconnect', () => {
+                    console.log('A user disconnected');
+                });
+            });
+
+            // Sync the User model with the database
             await User.sync();
             console.log('User model synchronized with the database');
-        } catch (error) {
-            console.error('Error synchronizing User model:', error);
-        }
 
-        console.log(`Ready! Logged in as ${client.user.tag}`);
+            console.log(`Ready! Logged in as ${client.user.tag}`);
+        } catch (error) {
+            console.error('Error setting bot status or synchronizing User model:', error);
+        }
     },
 };

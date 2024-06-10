@@ -15,9 +15,15 @@ const User = sequelize.define('User', {
     lastFMUsername: DataTypes.STRING,
 });
 
-// Define other models as needed
+const BotInfo = sequelize.define('BotInfo', {
+    key: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    value: DataTypes.STRING,
+});
 
 // Sync all defined models with the database
 sequelize.sync();
 
-module.exports = { User, sequelize };
+module.exports = { User, BotInfo, sequelize };
