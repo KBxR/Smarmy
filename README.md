@@ -1,50 +1,44 @@
 # Smarmy
 
-This Discord bot is a personal project created for experimenting with Discord.js features and building custom commands for personal use. It's not intended for production use but rather as a learning and testing environment.
+This Discord bot is a personal project created for experimenting with Discord.js features and building custom commands for personal use. It\'s not intended for production use but rather as a learning and testing environment.
 
 ## Features
 
 - Create and manage roles
 - View guild information
-- Update bot's avatar, username, and status
+- Update bot's avatar, username, and status via command
+- LastFM API calls
+- SQLite3 database for user info (Auto generated on first startup)
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js installed on your machine
+- Node.js installed
 - Discord Bot token
+- Discord application ID
+- ID of your server for admin commands
+- Your Discord ID for detailed error responses
+
+***Optional***
+- Last.fm API key (if using Last.fm commands)
+- Last.fm API secret (if needed for certain API calls)
 
 ### Installation
 
-1. Clone the repository:
+1. Install dependencies:
 
-   git clone https://github.com/your-username/discord-bot.git
-
-2. Navigate to the project directory:
-
-   cd discord-bot
-
-3. Install dependencies:
-
+   ```bash
    npm install
+   ```
 
-4. Set up your Discord Bot token and other configurations in the `config/config.json` file.
+2. Create a `.env` file in the root directory and add the following environment variables:
 
-5. Start the bot:
-
-   node bot.js
-
-### Usage
-
-Once the bot is running and added to your server, you can use various commands to interact with it.
-
-- Use `/help` command to view available commands.
-
-### Contributing
-
-Contributions are welcome! Feel free to fork this project and submit pull requests for new features or improvements.
-
-### License
-
-This project is licensed under the MIT License.
+   ```
+   BOT_TOKEN=your-bot-token-here
+   CLIENT_ID=your-application-id-here
+   GUILD_ID=your-guild-id-here
+   ADMIN_ID=your-admin-id-here
+   LASTFM_KEY=your-lastfm-key-here
+   LASTFM_SECRET=your-lastfm-secret-here
+   ```
