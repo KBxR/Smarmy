@@ -1,13 +1,13 @@
 const { EmbedBuilder } = require('discord.js');
 const axios = require('axios');
-const { User } = require('@database/models'); // Import the User model
+const DBHandler = require('@utils/DBHandler');
 const config = require('@config/config');
 const lastFmKey = config.lastFmKey;
 
 module.exports = async function handleList(interaction) {
     try {
         const userID = interaction.user.id;
-        const user = await User.findByPk(userID); 
+        const user = await DBHandler.loadUserData(userID);
 
         let username = interaction.options.getString('username');
 

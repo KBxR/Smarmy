@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { ActivityType } = require('discord.js');
 const axios = require('axios');
-const { BotInfo } = require('@database/models'); // Adjust the path as necessary
+const DBHandler = require('@utils/DBHandler');
 
 // Map between status type and ActivityType
 const activityTypeMap = {
@@ -62,7 +62,7 @@ module.exports = {
 
                     // Store avatar URL in the database
                     const avatarUrl = client.user.avatarURL();
-                    await BotInfo.upsert({ key: 'avatar', value: avatarUrl });
+                    await DBHandler.saveBotInfo('avatar', avatarUrl);
 
                     return interaction.reply({ content: 'The bot\'s avatar has been updated.', ephemeral: true });
                 } else if (newValue) {
@@ -70,7 +70,7 @@ module.exports = {
 
                     // Store avatar URL in the database
                     const avatarUrl = client.user.avatarURL();
-                    await BotInfo.upsert({ key: 'avatar', value: avatarUrl });
+                    await DBHandler.saveBotInfo('avatar', avatarUrl);
 
                     return interaction.reply({ content: 'The bot\'s avatar has been updated.', ephemeral: true });
                 } else {
@@ -83,7 +83,7 @@ module.exports = {
                 await client.user.setUsername(newValue);
 
                 // Store username in the database
-                await BotInfo.upsert({ key: 'username', value: newValue });
+                await DBHandler.saveBotInfo('username', newValue);
 
                 return interaction.reply({ content: 'The bot\'s username has been updated.', ephemeral: true });
             } else if (updateType === 'status') {
@@ -92,8 +92,8 @@ module.exports = {
                 }
 
                 // Store status type and name in the database
-                await BotInfo.upsert({ key: 'status_type', value: statusType });
-                await BotInfo.upsert({ key: 'status_name', value: newValue });
+                await DBHandler.saveBotInfo('status_type', statusType);
+                await DBHandler.saveBotInfo('status_name', newValue);
 
                 // Set the bot's presence immediately
                 client.user.setActivity(newValue, { type: activityTypeMap[statusType] });

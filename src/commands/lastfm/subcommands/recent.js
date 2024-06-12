@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const axios = require('axios');
-const { User } = require('@database/models');
+const DBHandler = require('@utils/DBHandler');
 const config = require('@config/config');
 const lastFmKey = config.lastFmKey;
 
@@ -9,13 +9,9 @@ module.exports = async function handleRecent(interaction) {
     let mention = interaction.options.getUser('member');
     let userID = interaction.user.id;
 
-    async function loadUserData(userID) {
-        return await User.findByPk(userID);
-    }
-
     if (username === null && mention !== null) {
         userID = mention.id;
-        const userData = await loadUserData(userID);
+        const userData = await DBHandler.loadUserData(userID);
         if (userData) {
             username = userData.lastFMUsername;
         } else {
@@ -24,7 +20,7 @@ module.exports = async function handleRecent(interaction) {
     } else if (username !== null && mention === null) {
         // Use the provided username
     } else if (username === null && mention === null) {
-        const userData = await loadUserData(userID);
+        const userData = await DBHandler.loadUserData(userID);
         if (userData) {
             username = userData.lastFMUsername;
         } else {
