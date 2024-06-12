@@ -5,8 +5,8 @@ module.exports = async function handleRoleRemove(interaction) {
     const role = interaction.options.getRole('role');
     const user = interaction.options.getUser('user');
     const member = interaction.options.getMember('user');
-    const { authorName, authorIconUrl } = await getBotInfo();
 
+    const { authorName, authorIconUrl } = await getBotInfo();
 
     // Remove the role from the user
     await member.roles.remove(role);
