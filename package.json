@@ -7,10 +7,19 @@
     "distube": "^5.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "module-alias": "^2.2.3",
     "multer": "^1.4.5-lts.1",
     "sequelize": "^6.37.3",
     "socket.io": "^4.7.5",
     "sodium-native": "^4.1.1",
     "sqlite3": "^5.1.7"
-  }
+  },
+  "_moduleAliases": {
+    "@root": ".",
+    "@commands": "./src/commands",
+    "@events": "./src/events",
+    "@models": "./src/models",
+    "@utils": "./src/utils",
+    "@config": "./src/config",
+    "@database": "./src/database"}
 }
