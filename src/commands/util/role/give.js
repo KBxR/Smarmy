@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
-const { getBotInfo } = require('../../../utils/botInfoUtil');
+const { getBotInfo } = require('@utils/botInfoUtil');
 
 module.exports = async function handleRoleGive(interaction) {
     const role = interaction.options.getRole('role');

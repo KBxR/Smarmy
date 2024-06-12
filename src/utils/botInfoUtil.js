@@ -1,4 +1,4 @@
-const { BotInfo } = require('../models');
+const { BotInfo } = require('@database/models');
 
 async function getBotInfo() {
     try {

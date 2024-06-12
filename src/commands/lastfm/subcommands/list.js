@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const axios = require('axios');
-const { User } = require('../../../models'); // Import the User model
-const config = require('../../../config');
+const { User } = require('@database/models'); // Import the User model
+const config = require('@config/config');
 const lastFmKey = config.lastFmKey;
 
 module.exports = async function handleList(interaction) {

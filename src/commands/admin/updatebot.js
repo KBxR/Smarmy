@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { ActivityType } = require('discord.js');
 const axios = require('axios');
-const { BotInfo } = require('../../models'); // Adjust the path as necessary
+const { BotInfo } = require('@database/models'); // Adjust the path as necessary
 
 // Map between status type and ActivityType
 const activityTypeMap = {

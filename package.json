@@ -18,7 +18,6 @@
     "@root": ".",
     "@commands": "./src/commands",
     "@events": "./src/events",
-    "@models": "./src/models",
     "@utils": "./src/utils",
     "@config": "./src/config",
     "@database": "./src/database"}

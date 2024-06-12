@@ -1,7 +1,6 @@
 const { ActivityType, Events } = require('discord.js');
-const io = require('socket.io')(3001); // WebSocket server on port 3001
-const { User } = require('../models'); // Import User model from models.js
-const { getBotInfo } = require('../utils/botInfoUtil'); // Adjust the path as necessary
+const { User } = require('@database/models'); // Import User model from models.js
+const { getBotInfo } = require('@utils/botInfoUtil'); // Adjust the path as necessary
 
 module.exports = {
     name: Events.ClientReady,
@@ -20,14 +19,6 @@ module.exports = {
 
             // Set the bot's activity from the database
             client.user.setActivity(statusName, { type: activityTypeMap[statusType] });
-
-            // Handle WebSocket connections
-            io.on('connection', (socket) => {
-                console.log('A user connected');
-                socket.on('disconnect', () => {
-                    console.log('A user disconnected');
-                });
-            });
 
             // Sync the User model with the database
             await User.sync();

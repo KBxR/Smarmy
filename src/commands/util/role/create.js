@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const axios = require('axios');
-const { getBotInfo } = require('../../../utils/botInfoUtil');
+const { getBotInfo } = require('@utils/botInfoUtil');
 
 module.exports = async function handleRoleCreate(interaction) {
     const name = interaction.options.getString('rolename');
