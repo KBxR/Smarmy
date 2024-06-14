@@ -7,24 +7,25 @@ module.exports = async function handleRecent(interaction) {
     let mention = interaction.options.getUser('member');
     let userID = interaction.user.id;
 
-    if (mention !== null) {
+    if (username === null && mention !== null) {
         userID = mention.id;
-    }
-    
-    const userData = await DBHandler.loadUserData(userID);
-    
-    if (userData) {
-        username = userData.lastFMUsername;
-    }
-    
-    if (username === null) {
-        if (mention !== null) {
+        const userData = await DBHandler.loadUserData(userID);
+        if (userData) {
+            username = userData.lastFMUsername;
+        } else {
             return interaction.reply({ content: 'No username found for the mentioned user.', ephemeral: true });
+        }
+    } else if (username !== null && mention === null) {
+        // Use the provided username
+    } else if (username === null && mention === null) {
+        const userData = await DBHandler.loadUserData(userID);
+        if (userData) {
+            username = userData.lastFMUsername;
         } else {
             return interaction.reply({ content: 'Please provide either a username, mention a member, or set your username with the command `/lastfm username`.', ephemeral: true });
         }
-    } else if (username !== null && mention !== null) {
-        return interaction.reply({ content: 'Please provide either a username or mention a member, not both.', ephemeral: true });
+    } else {
+        return interaction.reply({ content: 'Please provide either a LastFM username or mention a member, not both.', ephemeral: true });
     }
 
     try {
