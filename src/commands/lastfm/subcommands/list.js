@@ -3,11 +3,10 @@ const DBHandler = require('@utils/DBHandler');
 const { getLastFmUser, getRecentTracks } = require('@utils/api');
 
 module.exports = async function handleList(interaction) {
+    const userID = interaction.user.id;
+    let username = interaction.options.getString('username');
     try {
-        const userID = interaction.user.id;
         const user = await DBHandler.loadUserData(userID);
-
-        let username = interaction.options.getString('username');
 
         // If username is null, check the database for the Last.fm username
         if (username === null) {
@@ -26,7 +25,7 @@ module.exports = async function handleList(interaction) {
         if (length < 13 && length > 0) {
             const [resTrack, resUser] = await Promise.all([
                 getLastFmUser(username),
-                getRecentTracks(uusername)
+                getRecentTracks(username)
             ]);
 
             const recTracks = resTrack.track;

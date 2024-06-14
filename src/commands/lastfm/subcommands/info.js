@@ -62,6 +62,11 @@ module.exports = async function handleLastFmInfo(interaction) {
 
     } catch (error) {
         console.error('Error:', error);
-        return interaction.reply({ content: 'An error occurred while fetching the data.', ephemeral: true });
+        const detailedErrorUserId = '327885496036622347';
+        const errorMessage = userID === detailedErrorUserId && error.response && error.response.data && error.response.data.message
+            ? `An error occurred: ${error.response.data.message}`
+            : 'An error occurred while fetching your info or user does not exist.';
+        
+        interaction.reply({ content: errorMessage, ephemeral: true });
     }
 }
