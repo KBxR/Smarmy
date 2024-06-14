@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const DBHandler = require('@utils/DBHandler');
-const { getLastFmUser, getRecentTracks } = require('@utils/api');
+const { getLastFmUser, getRecentTrack } = require('@utils/api');
 
 module.exports = async function handleRecent(interaction) {
     let username = interaction.options.getString('username');
@@ -34,7 +34,7 @@ module.exports = async function handleRecent(interaction) {
             return interaction.reply({ content: 'The Last.fm username does not exist.', ephemeral: true });
         }
 
-        const res = await getRecentTracks(username);
+        const res = await getRecentTrack(username);
         
         const artistSplit = res.url.split('_');
         const recentEmbed = new EmbedBuilder()
@@ -55,7 +55,7 @@ module.exports = async function handleRecent(interaction) {
         const detailedErrorUserId = '327885496036622347';
         const errorMessage = userID === detailedErrorUserId && error.response && error.response.data && error.response.data.message
             ? `An error occurred: ${error.response.data.message}`
-            : 'An error occurred while fetching your most recent scrobble or user does not exist.';
+            : 'An error occurred, please try again later.';
         
         interaction.reply({ content: errorMessage, ephemeral: true });
     }

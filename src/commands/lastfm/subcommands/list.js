@@ -1,21 +1,35 @@
 const { EmbedBuilder } = require('discord.js');
+const axios = require('axios');
 const DBHandler = require('@utils/DBHandler');
-const { getLastFmUser, getRecentTracks } = require('@utils/api');
+const config = require('@config/config');
+const lastFmKey = config.lastFmKey;
 
 module.exports = async function handleList(interaction) {
-    const userID = interaction.user.id;
     let username = interaction.options.getString('username');
-    try {
-        const user = await DBHandler.loadUserData(userID);
+    let mention = interaction.options.getUser('member');
+    let userID = interaction.user.id;
 
-        // If username is null, check the database for the Last.fm username
-        if (username === null) {
-            if (!user || !user.lastFMUsername) {
-                return interaction.reply({ content: 'Please provide either a username, mention a member, or set your username with the command `/lastfm username`.', ephemeral: true });
-            }
-            username = user.lastFMUsername;
+    if (mention !== null) {
+        userID = mention.id;
+    }
+    
+    const userData = await DBHandler.loadUserData(userID);
+    
+    if (userData) {
+        username = userData.lastFMUsername;
+    }
+    
+    if (username === null) {
+        if (mention !== null) {
+            return interaction.reply({ content: 'No username found for the mentioned user.', ephemeral: true });
+        } else {
+            return interaction.reply({ content: 'Please provide either a username, mention a member, or set your username with the command `/lastfm username`.', ephemeral: true });
         }
+    } else if (username !== null && mention !== null) {
+        return interaction.reply({ content: 'Please provide either a username or mention a member, not both.', ephemeral: true });
+    }
 
+    try {
         let length = interaction.options.getString('length');
 
         if (length === null) {
@@ -24,19 +38,19 @@ module.exports = async function handleList(interaction) {
 
         if (length < 13 && length > 0) {
             const [resTrack, resUser] = await Promise.all([
-                getLastFmUser(username),
-                getRecentTracks(username)
+                axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getRecentTrack&user=${username}&api_key=${lastFmKey}&format=json&nowplaying=true&limit=${length - 1}`),
+                axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${username}&api_key=${lastFmKey}&format=json`)
             ]);
 
-            const recTracks = resTrack.track;
+            const recTracks = resTrack.data.recenttracks.track;
             const listArray = recTracks.map(track => track);
 
             const listEmbed = new EmbedBuilder()
                 .setColor('#e4141e')
                 .setTitle(`${username}'s Recently Played Tracks`)
-                .setAuthor({ name: username, iconURL: resUser.image[0]['#text'], url: resUser.url })
-                .setThumbnail(resUser.image[3]['#text'])
-                .setFooter({ text: `Playcount: ${resUser.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
+                .setAuthor({ name: username, iconURL: resUser.data.user.image[0]['#text'], url: resUser.data.user.url })
+                .setThumbnail(resUser.data.user.image[3]['#text'])
+                .setFooter({ text: `Playcount: ${resUser.data.user.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
 
             listArray.forEach(recTrack => {
                 listEmbed.addFields({ name: 'Track:', value: `[${recTrack.artist['#text']} - ${recTrack.name}](${recTrack.url})`, inline: true });
@@ -51,7 +65,7 @@ module.exports = async function handleList(interaction) {
         const detailedErrorUserId = '327885496036622347';
         const errorMessage = userID === detailedErrorUserId && error.response && error.response.data && error.response.data.message
             ? `An error occurred: ${error.response.data.message}`
-            : 'An error occurred while fetching a list your most recent scrobble or user does not exist.';
+            : 'An error occurred, please try again later.';
         
         interaction.reply({ content: errorMessage, ephemeral: true });
     }

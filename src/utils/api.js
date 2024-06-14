@@ -26,9 +26,9 @@ async function getLastFmUser(username) {
     return res.data.user;
 }
 
-async function getRecentTracks(username) {
-    const res = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${lastFmKey}&format=json&nowplaying=true&limit=1`);
+async function getRecentTrack(username) {
+    const res = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getRecentTrack&user=${username}&api_key=${lastFmKey}&format=json&nowplaying=true&limit=1`);
     return res.data.recenttracks.track[0];
 }
 
-module.exports = { getLastFmUserInfo, getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles, getLastFmUser, getRecentTracks };
+module.exports = { getLastFmUserInfo, getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles, getLastFmUser, getRecentTrack };
