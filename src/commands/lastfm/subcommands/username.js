@@ -1,8 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
-const axios = require('axios');
 const { User } = require('@database/models');
-const config = require('@config/config');
-const lastFmKey = config.lastFmKey;
+const { getLastFmUser } = require('@utils/api');
 
 module.exports = async function handleUsername(interaction) {
     const username = interaction.options.getString('username');
@@ -19,12 +17,12 @@ module.exports = async function handleUsername(interaction) {
         }
 
         // Fetch user info from Last.fm
-        const resUser = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${username}&api_key=${lastFmKey}&format=json`);
-        if (!resUser.data.user) {
+        const lastFmUser = await getLastFmUser(username);
+        if (!lastFmUser.data.user) {
             return interaction.reply({ content: 'The Last.fm username does not exist.', ephemeral: true });
         }
 
-        const userInfo = resUser.data.user;
+        const userInfo = lastFmUser.data.user;
         const profilePic = userInfo.image[userInfo.image.length - 1]['#text'];
         const scrobbleCount = userInfo.playcount;
         const accountCreationDate = new Date(userInfo.registered['#text'] * 1000).toLocaleDateString();

@@ -1,8 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
-const axios = require('axios');
 const DBHandler = require('@utils/DBHandler');
-const config = require('@config/config');
-const lastFmKey = config.lastFmKey;
+const { getLastFmUser, getRecentTracks } = require('@utils/api');
 
 module.exports = async function handleList(interaction) {
     try {
@@ -27,8 +25,8 @@ module.exports = async function handleList(interaction) {
 
         if (length < 13 && length > 0) {
             const [resTrack, resUser] = await Promise.all([
-                axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${lastFmKey}&format=json&nowplaying=true&limit=${length - 1}`),
-                axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${username}&api_key=${lastFmKey}&format=json`)
+                getLastFmUser(username),
+                getRecentTracks(uusername)
             ]);
 
             const recTracks = resTrack.data.recenttracks.track;
