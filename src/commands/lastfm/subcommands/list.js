@@ -29,15 +29,15 @@ module.exports = async function handleList(interaction) {
                 getRecentTracks(uusername)
             ]);
 
-            const recTracks = resTrack.data.recenttracks.track;
+            const recTracks = resTrack.track;
             const listArray = recTracks.map(track => track);
 
             const listEmbed = new EmbedBuilder()
                 .setColor('#e4141e')
                 .setTitle(`${username}'s Recently Played Tracks`)
-                .setAuthor({ name: username, iconURL: resUser.data.user.image[0]['#text'], url: resUser.data.user.url })
-                .setThumbnail(resUser.data.user.image[3]['#text'])
-                .setFooter({ text: `Playcount: ${resUser.data.user.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
+                .setAuthor({ name: username, iconURL: resUser.image[0]['#text'], url: resUser.url })
+                .setThumbnail(resUser.image[3]['#text'])
+                .setFooter({ text: `Playcount: ${resUser.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
 
             listArray.forEach(recTrack => {
                 listEmbed.addFields({ name: 'Track:', value: `[${recTrack.artist['#text']} - ${recTrack.name}](${recTrack.url})`, inline: true });
