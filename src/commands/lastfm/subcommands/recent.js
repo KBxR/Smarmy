@@ -52,7 +52,7 @@ module.exports = async function handleRecent(interaction) {
             .setThumbnail(`${res.data.recenttracks.track[0].image[3]['#text']}`)
             .setFooter({ text: `Playcount: ${resUser.data.user.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
 
-        interaction.reply({ embeds: [recentEmbed] });
+        interaction.reply({ embeds: [recentEmbed], ephemeral: false });
     } catch (error) {
         console.error('Error:', error);
         const detailedErrorUserId = '327885496036622347';

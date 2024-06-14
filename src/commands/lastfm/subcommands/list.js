@@ -22,7 +22,7 @@ module.exports = async function handleList(interaction) {
         let length = interaction.options.getString('length');
 
         if (length === null) {
-            length = 12;
+            length = 6;
         }
 
         if (length < 13 && length > 0) {
