@@ -55,7 +55,9 @@ module.exports = {
                 .addStringOption(option =>
                     option.setName('username')
                         .setDescription('LastFM Username'))
-
+                .addUserOption(option =>
+                    option.setName('member')
+                        .setDescription('User in server to check'))
                 .addStringOption(option =>
                     option.setName('length')
                         .setDescription('How many tracks you want displayed (Max length is 12)'))

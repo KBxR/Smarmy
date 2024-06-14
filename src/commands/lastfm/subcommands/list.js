@@ -38,7 +38,7 @@ module.exports = async function handleList(interaction) {
 
         if (length < 13 && length > 0) {
             const [resTrack, resUser] = await Promise.all([
-                axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getRecentTrack&user=${username}&api_key=${lastFmKey}&format=json&nowplaying=true&limit=${length - 1}`),
+                axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getRecentTracks&user=${username}&api_key=${lastFmKey}&format=json&nowplaying=true&limit=${length - 1}`),
                 axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${username}&api_key=${lastFmKey}&format=json`)
             ]);
 

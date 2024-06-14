@@ -27,7 +27,7 @@ async function getLastFmUser(username) {
 }
 
 async function getRecentTrack(username) {
-    const res = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getRecentTrack&user=${username}&api_key=${lastFmKey}&format=json&nowplaying=true&limit=1`);
+    const res = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getRecentTracks&user=${username}&api_key=${lastFmKey}&format=json&nowplaying=true&limit=1`);
     return res.data.recenttracks.track[0];
 }
 
