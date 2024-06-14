@@ -1,10 +1,22 @@
-const { EmbedBuilder } = require('discord.js');
+const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
 const DBHandler = require('@utils/DBHandler');
-const config = require('@config/config');
-const lastFmKey = config.lastFmKey;
+const lastFmKey = require('@config/config').lastFmKey;
 
-module.exports = async function handleList(interaction) {
+module.exports.data = new SlashCommandSubcommandBuilder()
+    .setName('list')
+    .setDescription('Gives a list of most recent tracks')
+    .addStringOption(option =>
+        option.setName('username')
+            .setDescription('LastFM Username'))
+    .addUserOption(option =>
+        option.setName('member')
+            .setDescription('User in server to check'))
+    .addStringOption(option =>
+        option.setName('length')
+            .setDescription('How many tracks you want displayed (Max length is 12)'));
+
+module.exports.execute = async function handleList(interaction) {
     let username = interaction.options.getString('username');
     let mention = interaction.options.getUser('member');
     let userID = interaction.user.id;

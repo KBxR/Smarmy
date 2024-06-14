@@ -1,8 +1,18 @@
-const { EmbedBuilder } = require('discord.js');
+const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const DBHandler = require('@utils/DBHandler');
 const { getLastFmUser, getRecentTrack } = require('@utils/api');
 
-module.exports = async function handleRecent(interaction) {
+module.exports.data = new SlashCommandSubcommandBuilder()
+    .setName('recent')
+    .setDescription('Gets your most recent scrobble on LastFM')
+    .addStringOption(option =>
+        option.setName('username')
+            .setDescription('LastFM Username'))
+    .addUserOption(option =>
+        option.setName('member')
+            .setDescription('User in server to check'));
+
+module.exports.execute = async function handleRecent(interaction) {
     let username = interaction.options.getString('username');
     let mention = interaction.options.getUser('member');
     let userID = interaction.user.id;

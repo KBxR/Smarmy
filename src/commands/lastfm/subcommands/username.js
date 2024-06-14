@@ -1,8 +1,16 @@
-const { EmbedBuilder } = require('discord.js');
+const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const { User } = require('@database/models');
 const { getLastFmUser } = require('@utils/api');
 
-module.exports = async function handleUsername(interaction) {
+module.exports.data = new SlashCommandSubcommandBuilder()
+    .setName('username')
+    .setDescription('Adds a LastFM username to your account')
+    .addStringOption(option =>
+        option.setName('username')
+            .setDescription('LastFM Username')
+            .setRequired(true));
+
+module.exports.execute = async function handleUsername(interaction) {
     const username = interaction.options.getString('username');
     const userID = interaction.user.id;
 
