@@ -58,7 +58,7 @@ module.exports.execute = async function handleRecent(interaction) {
                 { name: 'Album', value: `${res.album['#text']}`, inline: true }
             )
             .setThumbnail(`${res.image[3]['#text']}`)
-            .setFooter({ text: `Playcount: ${resUser.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
+            .setFooter({ text: `Total Scrobbles: ${resUser.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
 
         interaction.reply({ embeds: [recentEmbed], ephemeral: false });
     } catch (error) {

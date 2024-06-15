@@ -1,6 +1,6 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const DBHandler = require('@utils/DBHandler');
-const { getLastFmUserInfo, getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles } = require('@utils/api');
+const { getLastFmUser, getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles } = require('@utils/api');
 
 module.exports.data = new SlashCommandSubcommandBuilder()
     .setName('info')
@@ -39,7 +39,7 @@ module.exports.execute = async function handleInfo(interaction) {
     }
 
     try {
-        const userInfo = await getLastFmUserInfo(username);
+        const userInfo = await getLastFmUser(username);
         const avatar = userInfo.image[3]['#text'];
         const scrobbles = userInfo.playcount;
     

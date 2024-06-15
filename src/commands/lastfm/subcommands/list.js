@@ -63,7 +63,7 @@ module.exports.execute = async function handleList(interaction) {
                 .setTitle(`${username}'s Recently Played Tracks`)
                 .setAuthor({ name: username, iconURL: resUser.data.user.image[0]['#text'], url: resUser.data.user.url })
                 .setThumbnail(resUser.data.user.image[3]['#text'])
-                .setFooter({ text: `Playcount: ${resUser.data.user.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
+                .setFooter({ text: `Total Scrobbles: ${resUser.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
 
             listArray.forEach(recTrack => {
                 listEmbed.addFields({ name: 'Track:', value: `[${recTrack.artist['#text']} - ${recTrack.name}](${recTrack.url})`, inline: true });
