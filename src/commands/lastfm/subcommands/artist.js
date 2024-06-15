@@ -1,5 +1,5 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
-const { getArtistInfo, getArtistInfoWUsername, getLastFmUser } = require('@utils/api');
+const { getArtistInfo, getArtistInfoWUsername, getLastFmUser, getRecentTrack } = require('@utils/api');
 const DBHandler = require('@utils/DBHandler');
 
 module.exports.data = new SlashCommandSubcommandBuilder()
@@ -7,8 +7,7 @@ module.exports.data = new SlashCommandSubcommandBuilder()
     .setDescription('Gets an artist\'s information from LastFM')
     .addStringOption(option =>
         option.setName('artist')
-            .setDescription('Artist name to search for')
-            .setRequired(true))
+            .setDescription('Artist name to search for'))
     .addStringOption(option =>
         option.setName('username')
             .setDescription('Your Last.FM username'));
@@ -25,6 +24,11 @@ module.exports.execute = async function handleArtistInfo(interaction) {
         if (userData) {
             username = userData.lastFMUsername;
         }
+    }
+
+    if (artist === null) {
+        const recentTrack = await getRecentTrack(username);
+        artist = recentTrack.artist['#text'];
     }
     
     let res;
@@ -67,7 +71,6 @@ module.exports.execute = async function handleArtistInfo(interaction) {
                 artistEmbed.setAuthor({ name: `${username}`, iconURL: `${resUser.image[0]['#text']}`, url: `${resUser.url}` })
                 artistEmbed.setFooter({ text: `Total Scrobbles: ${resUser.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
             }
-            console.log(res);
             interaction.reply({ embeds: [artistEmbed], ephemeral: false });
 
     } catch (error) {
