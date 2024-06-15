@@ -54,18 +54,18 @@ module.exports.execute = async function handleArtistInfo(interaction) {
         const artistEmbed = new EmbedBuilder()
             .setColor('#e4141e')
             .setTitle(`${capFirst} Info`)
-            .setAuthor({ name: `${username}`, iconURL: `${resUser.image[0]['#text']}`, url: `${resUser.url}` })
             .addFields(
                 { name: 'Summary', value: `${summarySplit[0]}`, inline: false },
                 { name: 'Scrobbles', value: `${res.stats.playcount}`, inline: true },
                 { name: 'Listeners', value: `${res.stats.listeners}`, inline: true }
             )
             .setThumbnail(`${res.image[3]['#text']}`)
-            .setFooter({ text: `Total Scrobbles: ${resUser.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
             if (usr === true) {
                 artistEmbed.addFields(
                     { name: 'Your Scrobbles', value: `${res.stats.userplaycount}`, inline: true }
                 )
+                artistEmbed.setAuthor({ name: `${username}`, iconURL: `${resUser.image[0]['#text']}`, url: `${resUser.url}` })
+                artistEmbed.setFooter({ text: `Total Scrobbles: ${resUser.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
             }
             console.log(res);
             interaction.reply({ embeds: [artistEmbed], ephemeral: false });
