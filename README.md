@@ -7,8 +7,9 @@ This Discord bot is a personal project created for experimenting with Discord.js
 - Create and manage roles
 - View guild information
 - Update bot's avatar, username, and status via command
-- LastFM API calls
+- LastFM API Support
 - SQLite3 database for user info (Auto generated on first startup)
+- Luma API Support (Not really finished, but "working")
 
 ## Getting Started
 
