@@ -51,7 +51,7 @@ module.exports.execute = async function handleArtistInfo(interaction) {
             return interaction.reply({ content: 'The Last.fm username does not exist.', ephemeral: true });
         }
 
-        const capFirst = artist.charAt(0).toUpperCase() + artist.slice(1);
+        const capFirst = artist.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         const summarySplit = res.bio.summary.split('<a');
         const artistEmbed = new EmbedBuilder()
             .setColor('#e4141e')
