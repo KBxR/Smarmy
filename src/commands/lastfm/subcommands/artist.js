@@ -11,8 +11,6 @@ module.exports.data = new SlashCommandSubcommandBuilder()
     .addStringOption(option =>
         option.setName('username')
             .setDescription('Your Last.FM username'));
-
-
             
 module.exports.execute = async function handleArtistInfo(interaction) {
     let username = interaction.options.getString('username');
@@ -57,7 +55,7 @@ module.exports.execute = async function handleArtistInfo(interaction) {
         const summarySplit = res.bio.summary.split('<a');
         const artistEmbed = new EmbedBuilder()
             .setColor('#e4141e')
-            .setTitle(`${capFirst} Info`)
+            .setTitle(`${capFirst}`)
             .addFields(
                 { name: 'Summary', value: `${summarySplit[0]}`, inline: false },
                 { name: 'Scrobbles', value: `${res.stats.playcount}`, inline: true },

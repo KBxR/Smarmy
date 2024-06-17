@@ -15,6 +15,7 @@ for (const file of commandFiles) {
 }
 
 module.exports = {
+    category: 'admin',
     data: command,
     async execute(interaction) {
         const subcommand = interaction.options.getSubcommand();
