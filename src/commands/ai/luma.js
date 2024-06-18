@@ -5,8 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { getBotInfo } = require('@utils/botInfoUtil');
-const { getRandomHexColor } = require('@utils/colorUtil');
-const { authorName, authorIconUrl } = await getBotInfo();
+const { getRandomHexColor } = require('@utils/randomColor');
 const randomColor = getRandomHexColor();
 
 module.exports = {
@@ -36,16 +35,19 @@ module.exports = {
 
                     const escapedAttachment = filePath.replace(/"/g, '\\"');
                 
+                    const { authorName, authorIconUrl } = await getBotInfo();
+
                     // Create an embed message
                     const embed = new EmbedBuilder()
                         .setColor(randomColor)
                         .setAuthor({ name: authorName, iconURL: authorIconUrl })
                         .setTitle('Processing...')
-                        .setDescription(`Prompt: ${prompt}\nPlease wait while the AI generates the video.`)
+                        .setDescription(`Prompt: \`${prompt}\`\nPlease wait while the AI generates the video. (May take around an hour :/)`)
                         .setImage(attachment.url);
                 
                     // Send the embed message
                     interaction.reply({ embeds: [embed], fetchReply: true });
+                    fs.unlinkSync(filePath);
                 
                     exec(`python ./src/commands/ai/DreamMachineAPI-main/main.py "${escapedPrompt}" "${escapedAttachment}"`, (error, stdout, stderr) => {
                         if (error) {
@@ -57,12 +59,7 @@ module.exports = {
                         // Extract the video URL from the Python script output
                         const videoUrl = stdout.match(/New video link: (.*)/)[1];
                 
-                        // Edit the embed message with the video URL
-                        embed.setTitle('AI Generated Video')
-                            .setDescription(`[Click here to view the video](${videoUrl})`);
-                
-                        // Edit the message with the new embed
-                        interaction.editReply({ embeds: [embed] });
+                        interaction.followUp({ content: `Video generated!\n${videoUrl}` });
                     });
                 }
 };
