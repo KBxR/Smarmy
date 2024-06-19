@@ -11,7 +11,8 @@ const config = {
     guildId: process.env.GUILD_ID,
     adminId: process.env.ADMIN_ID,
     lastFmKey: process.env.LASTFM_KEY,
-    lastFmSecret: process.env.LASTFM_SECRET
+    lastFmSecret: process.env.LASTFM_SECRET,
+    rebrickKey: process.env.REBRICK_KEY
 };
 
 module.exports = config;
