@@ -1,4 +1,3 @@
-const config = require('@config/config');
 const { SlashCommandBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
