@@ -47,9 +47,9 @@ module.exports = {
                 
                     // Send the embed message
                     interaction.reply({ embeds: [embed], fetchReply: true });
-                    fs.unlinkSync(filePath);
                 
                     exec(`python ./src/commands/ai/DreamMachineAPI-main/main.py "${escapedPrompt}" "${escapedAttachment}"`, (error, stdout, stderr) => {
+                        fs.unlinkSync(filePath);
                         if (error) {
                             console.error(`exec error: ${error}`);
                             return;

@@ -1,11 +1,14 @@
 import asyncio
+import os
 import sys
+from dotenv import load_dotenv
 from util import dreamMachineMake, refreshDreamMachine
 
+load_dotenv()
 
 async def main():
     # Your access_token
-    access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidXNlcl91dWlkIjoiODIzYjlkOGYtMDc4ZS00N2Y4LTljZWItOGE2MmRhNjg2MzkyIiwiY2xpZW50X2lkIjoiIn0sImV4cCI6MTcxOTIzOTczMX0.BT8TDZRNARvRgXBFY2m_Ol4bMoZgCWxPBpi80oHhXWQ"
+    access_token = os.getenv('LUMA_COOKIE')
     prompt = sys.argv[1]  # Get the prompt from command-line arguments
     img_file = "./src/commands/ai/tempImage.jpg"
 
