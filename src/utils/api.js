@@ -39,12 +39,12 @@ async function getArtistInfoWUsername(artist, username) {
 }
 
 async function getTopTracks(username) {
-    const res = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${username}&api_key=${lastFmKey}&format=json`);
+    const res = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${username}&api_key=${lastFmKey}&format=json&limit=10`);
     return res.data.toptracks.track;
 }
 
 async function getTopAlbums(username) {
-    const res = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${username}&api_key=${lastFmKey}&format=json`);
+    const res = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${username}&api_key=${lastFmKey}&format=json&limit=10`);
     return res.data.topalbums.album;
 }
 
