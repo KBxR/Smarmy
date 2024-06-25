@@ -87,6 +87,7 @@ module.exports.execute = async function handleMostPlayed(interaction) {
             .setAuthor({ name: `${username}`, iconURL: `${resUser.image[0]['#text']}`, url: `${resUser.url}` })
             .setTitle(`Most Played ${topTypeString}s for ${username}`)
             .setColor('#e4141e')
+            .setThumbnail(topData[0].image[2]['#text'])
             .setTimestamp();
 
             topData.slice(0, 5).forEach((data, index) => {
