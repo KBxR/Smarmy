@@ -1,6 +1,8 @@
 const axios = require('axios');
 const { lastFmKey, rebrickKey} = require('@config/config');
 
+// LAST.FM API
+
 async function getWeeklyTopArtists(username) {
     const res = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getweeklyartistchart&user=${username}&api_key=${lastFmKey}&format=json`);
     return res.data.weeklyartistchart.artist;
@@ -36,10 +38,21 @@ async function getArtistInfoWUsername(artist, username) {
     return res.data.artist;
 }
 
-//gets api data from rebrickable
+async function getTopTracks(username) {
+    const res = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${username}&api_key=${lastFmKey}&format=json`);
+    return res.data.toptracks.track;
+}
+
+async function getTopAlbums(username) {
+    const res = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${username}&api_key=${lastFmKey}&format=json`);
+    return res.data.topalbums.album;
+}
+
+// REBRICKABLE API
+
 async function getRebrickableMinifigSearch(search) {
     const res = await axios.get(`https://rebrickable.com/api/v3/lego/minifigs/?search=${search}&key=${rebrickKey}`);
     return res.data.results;
 }
 
-module.exports = { getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles, getLastFmUser, getRecentTrack, getArtistInfo, getArtistInfoWUsername, getRebrickableMinifigSearch };
+module.exports = { getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles, getLastFmUser, getRecentTrack, getArtistInfo, getArtistInfoWUsername, getRebrickableMinifigSearch, getTopTracks, getTopAlbums };
