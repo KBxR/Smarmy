@@ -2,6 +2,7 @@ const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
 const DBHandler = require('@utils/DBHandler');
 const lastFmKey = require('@config/config').lastFmKey;
+const resolveUsername = require('../utils/usernameResolver');
 
 module.exports.data = new SlashCommandSubcommandBuilder()
     .setName('list')
@@ -21,26 +22,11 @@ module.exports.execute = async function handleList(interaction) {
     let mention = interaction.options.getUser('member');
     let userID = interaction.user.id;
 
-    if (username === null && mention !== null) {
-        userID = mention.id;
-        const userData = await DBHandler.loadUserData(userID);
-        if (userData) {
-            username = userData.lastFMUsername;
-        } else {
-            return interaction.reply({ content: 'No username found for the mentioned user.', ephemeral: true });
-        }
-    } else if (username !== null && mention === null) {
-        // Use the provided username
-    } else if (username === null && mention === null) {
-        const userData = await DBHandler.loadUserData(userID);
-        if (userData) {
-            username = userData.lastFMUsername;
-        } else {
-            return interaction.reply({ content: 'Please provide either a username, mention a member, or set your username with the command `/lastfm username`.', ephemeral: true });
-        }
-    } else {
-        return interaction.reply({ content: 'Please provide either a LastFM username or mention a member, not both.', ephemeral: true });
+    const result = await resolveUsername({ username, mention, userID, interaction, DBHandler });
+    if (result.error) {
+        return interaction.reply({ content: result.error, ephemeral: true });
     }
+    username = result.username;
 
     try {
         let length = interaction.options.getString('length');
