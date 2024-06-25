@@ -80,7 +80,6 @@ module.exports.execute = async function handleMostPlayed(interaction) {
             return interaction.reply({ content: 'The Last.fm username does not exist.', ephemeral: true });
         }
 
-        const mostPlayed = topData[0];
         const embed = new EmbedBuilder()
             .setAuthor({ name: `${username}`, iconURL: `${resUser.image[0]['#text']}`, url: `${resUser.url}` })
             .setTitle(`Most Played ${topTypeString}\'s for ${username}`)
@@ -88,7 +87,14 @@ module.exports.execute = async function handleMostPlayed(interaction) {
             .setTimestamp();
 
             topData.slice(0, 5).forEach((data, index) => {
-                embed.addFields({name: `#${index + 1} ${data.name}`, value: `Playcount: ${data.playcount}`, inline: false});
+
+                if (topType === 'track' || topType === 'album') {
+                    embed.addFields({name: `#${index + 1} ${data.artist.name} - ${data.name}`, value: `Playcount: ${data.playcount}`, inline: false});
+                    return;
+                } else {
+                    embed.addFields({name: `#${index + 1} ${data.name}`, value: `Playcount: ${data.playcount}`, inline: false});
+                    return;
+                }
             });
 
         interaction.reply({ embeds: [embed] });
