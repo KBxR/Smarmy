@@ -85,7 +85,7 @@ module.exports.execute = async function handleMostPlayed(interaction) {
 
         const embed = new EmbedBuilder()
             .setAuthor({ name: `${username}`, iconURL: `${resUser.image[0]['#text']}`, url: `${resUser.url}` })
-            .setTitle(`Most Played ${topTypeString}\'s for ${username}`)
+            .setTitle(`Most Played ${topTypeString}s for ${username}`)
             .setColor('#e4141e')
             .setTimestamp();
 
