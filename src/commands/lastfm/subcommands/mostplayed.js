@@ -80,6 +80,9 @@ module.exports.execute = async function handleMostPlayed(interaction) {
             return interaction.reply({ content: 'The Last.fm username does not exist.', ephemeral: true });
         }
 
+        // makes the first letter of the TopTypeString uppercase
+        topTypeString = topTypeString.charAt(0).toUpperCase() + topTypeString.slice(1);
+
         const embed = new EmbedBuilder()
             .setAuthor({ name: `${username}`, iconURL: `${resUser.image[0]['#text']}`, url: `${resUser.url}` })
             .setTitle(`Most Played ${topTypeString}\'s for ${username}`)
