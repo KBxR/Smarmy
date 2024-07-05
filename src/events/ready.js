@@ -1,6 +1,6 @@
 const { ActivityType, Events } = require('discord.js');
-const { User } = require('@database/models'); // Import User model from models.js
-const { getBotInfo } = require('@utils/botInfoUtil'); // Adjust the path as necessary
+const { User } = require('@database/models');
+const { getBotInfo } = require('@utils/botInfoUtil');
 
 module.exports = {
     name: Events.ClientReady,
