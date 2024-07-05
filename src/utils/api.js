@@ -55,4 +55,9 @@ async function getRebrickableMinifigSearch(search) {
     return res.data.results;
 }
 
-module.exports = { getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles, getLastFmUser, getRecentTrack, getArtistInfo, getArtistInfoWUsername, getRebrickableMinifigSearch, getTopTracks, getTopAlbums };
+async function getRebrickablePartSearch(search) {
+    const res = await axios.get(`https://rebrickable.com/api/v3/lego/parts/?search=${search}&key=${rebrickKey}`);
+    return res.data.results;
+}
+
+module.exports = { getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles, getLastFmUser, getRecentTrack, getArtistInfo, getArtistInfoWUsername, getRebrickableMinifigSearch, getTopTracks, getTopAlbums, getRebrickablePartSearch };
