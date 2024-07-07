@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { lastFmKey, rebrickKey} = require('@config/config');
+const { lastFmKey, rebrickKey, isaacKey} = require('@config/config');
 
 // LAST.FM API
 
@@ -63,12 +63,20 @@ async function getRebrickablePartSearch(search) {
 // BINDING OF ISAAC API
 
 async function getIsaacItemName(name) {
-    const res = await axios.get(`http://api.sicklesheen.xyz/api/item/search?name=${name}`);
+    const res = await axios.get(`http://api.sicklesheen.xyz/api/item/search?name=${name}`, {
+        headers: {
+            'api-key': isaacKey
+        }
+    });
     return res.data;
 }
 
 async function getIsaacItemID(id) {
-    const res = await axios.get(`http://api.sicklesheen.xyz/api/item/search?id=${id}`);
+    const res = await axios.get(`http://api.sicklesheen.xyz/api/item/search?id=${id}`, {
+        headers: {
+            'api-key': isaacKey
+        }
+    });
     return res.data;
 }
 

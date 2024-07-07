@@ -47,7 +47,7 @@ module.exports.execute = async function handleIsaacItem(interaction) {
                         dlcName = "<:dlc_r:1259327686258593802> Repentance";
                         break;
                     default:
-                        dlcName = ""; // In case there's an unexpected value
+                        dlcName = "";
                 }
                 if (dlcName) {
                     itemEmbed.addFields({ name: '**DLC**', value: dlcName, inline: true });
