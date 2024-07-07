@@ -60,4 +60,16 @@ async function getRebrickablePartSearch(search) {
     return res.data.results;
 }
 
-module.exports = { getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles, getLastFmUser, getRecentTrack, getArtistInfo, getArtistInfoWUsername, getRebrickableMinifigSearch, getTopTracks, getTopAlbums, getRebrickablePartSearch };
+// BINDING OF ISAAC API
+
+async function getIsaacItemName(name) {
+    const res = await axios.get(`http://api.sicklesheen.xyz/api/item/search?name=${name}`);
+    return res.data;
+}
+
+async function getIsaacItemID(id) {
+    const res = await axios.get(`http://api.sicklesheen.xyz/api/item/search?id=${id}`);
+    return res.data;
+}
+
+module.exports = { getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles, getLastFmUser, getRecentTrack, getArtistInfo, getArtistInfoWUsername, getRebrickableMinifigSearch, getTopTracks, getTopAlbums, getRebrickablePartSearch, getIsaacItemName, getIsaacItemID };
