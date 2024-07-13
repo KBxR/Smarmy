@@ -13,7 +13,6 @@ const config = {
     lastFmKey: process.env.LASTFM_KEY,
     lastFmSecret: process.env.LASTFM_SECRET,
     rebrickKey: process.env.REBRICK_KEY,
-    isaacKey: process.env.ISAAC_KEY,
 };
 
 module.exports = config;
