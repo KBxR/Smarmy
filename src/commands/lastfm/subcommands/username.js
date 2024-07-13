@@ -1,6 +1,6 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const { User } = require('@database/models');
-const { getLastFmUser } = require('@utils/api');
+const { getLastFmUser } = require('@api/lastFm');
 
 module.exports.data = new SlashCommandSubcommandBuilder()
     .setName('username')

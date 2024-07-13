@@ -1,5 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashCommandSubcommandBuilder } = require('discord.js');
-const { getIsaacItemName, getIsaacItemID } = require('@utils/api');
+const { getItemName, getItemID } = require('@api/bindingOfIsaac');
 
 module.exports.data = new SlashCommandSubcommandBuilder()
     .setName('item')
@@ -21,15 +21,31 @@ module.exports.execute = async function handleIsaacItem(interaction) {
     try {   
         let res;
         if (name) {
-            res = await getIsaacItemName(name);
+            res = await getItemName(name);
         } else if (id) {
-            res = await getIsaacItemID(id);
+            res = await getItemID(id);
         } else {
             return interaction.reply({ content: 'Please provide an item name or ID.', ephemeral: true });
         }
 
         if (res.length === 0) {
             return interaction.reply({ content: 'No items found.', ephemeral: true });
+        }
+
+        function getQualityStars(quality) {
+            const maxStars = 5;
+            const fullStars = itemFullStar.repeat(quality);
+            const emptyStars = itemEmptyStar.repeat(maxStars - quality);
+            return `${fullStars}${emptyStars}`;
+        }
+        
+        function getDlcName(dlcCode) {
+            const dlcNames = {
+                a: "<:dlc_a:1259327747319398480> Afterbirth",
+                ap: "<:dlc_ap:1259324822639611954> Afterbirth+",
+                r: "<:dlc_r:1259327686258593802> Repentance"
+            };
+            return dlcNames[dlcCode] || "";
         }
 
         const updateEmbed = (index) => {
@@ -39,53 +55,19 @@ module.exports.execute = async function handleIsaacItem(interaction) {
                 .setTitle(`${item.name}`)
                 .setURL(`https://bindingofisaacrebirth.fandom.com/wiki/${item.name.replace(/ /g, '_')}`)
                 .setThumbnail(item.image)
-                .setFooter({ text: `Page ${index + 1} of ${res.length}` })
-                itemEmbed.addFields({ name: '**ID**', value: `\`${item.id}\``, inline: true })
+                .setFooter({ text: `Page ${index + 1} of ${res.length}` });
+        
+            itemEmbed.addFields({ name: '**ID**', value: `\`${item.id}\``, inline: true });
 
                 if (item.quality !== "6") {
-                    let itemQuality;
-                    switch (item.quality) {
-                        case 0:
-                            itemQuality = `${itemEmptyStar.repeat(5)}`;
-                            break;
-                        case 1:
-                            itemQuality = `${itemFullStar}${itemEmptyStar.repeat(4)}`;
-                            break;
-                        case 2:
-                            itemQuality = `${itemFullStar.repeat(2)}${itemEmptyStar.repeat(3)}`;
-                            break;
-                        case 3:
-                            itemQuality = `${itemFullStar.repeat(3)}${itemEmptyStar.repeat(2)}`;
-                            break;
-                        case 4:
-                            itemQuality = `${itemFullStar.repeat(4)}${itemEmptyStar}`;
-                            break;
-                        case 5:
-                            itemQuality = `${itemFullStar.repeat(5)}`;
-                            break
-                        default:
-                            itemQuality = "";
-                    }
+                    const itemQuality = getQualityStars(parseInt(item.quality));
                     if (itemQuality) {
                         itemEmbed.addFields({ name: '**Item Quality**', value: itemQuality, inline: true });
                     }
                 }
 
                 if (item.dlc !== "none") {
-                    let dlcName;
-                    switch (item.dlc) {
-                        case "a":
-                            dlcName = "<:dlc_a:1259327747319398480> Afterbirth";
-                            break;
-                        case "ap":
-                            dlcName = "<:dlc_ap:1259324822639611954> Afterbirth+";
-                            break;
-                        case "r":
-                            dlcName = "<:dlc_r:1259327686258593802> Repentance";
-                            break;
-                        default:
-                            dlcName = "";
-                    }
+                    const dlcName = getDlcName(item.dlc);
                     if (dlcName) {
                         itemEmbed.addFields({ name: '**DLC**', value: dlcName, inline: true });
                     }

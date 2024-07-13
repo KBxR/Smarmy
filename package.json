@@ -20,5 +20,6 @@
     "@events": "./src/events",
     "@utils": "./src/utils",
     "@config": "./src/config",
-    "@database": "./src/database"}
+    "@database": "./src/database",
+    "@api": "./src/api"}
 }

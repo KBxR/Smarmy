@@ -1,5 +1,5 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
-const { getRebrickablePartSearch } = require('@utils/api');
+const { getPartSearch } = require('@api/rebrickable');
 
 module.exports.data = new SlashCommandSubcommandBuilder()
     .setName('searchpart')
@@ -11,7 +11,7 @@ module.exports.data = new SlashCommandSubcommandBuilder()
             
 module.exports.execute = async function handleMinifigSearch(interaction) {
     const search = interaction.options.getString('search');
-    const results = await getRebrickablePartSearch(search);
+    const results = await getPartSearch(search);
 
     let index = 0;
     const embed = new EmbedBuilder()
