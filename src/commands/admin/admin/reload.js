@@ -1,18 +1,18 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandSubcommandBuilder } = require('discord.js');
 const config = require('@config/config');
 const fs = require('fs');
 const path = require('path');
 
-module.exports = {
-    category: 'admin',
-    data: new SlashCommandBuilder()
+module.exports.data = new SlashCommandSubcommandBuilder()
         .setName('reload')
         .setDescription('Reloads a command.')
         .addStringOption(option =>
             option.setName('command')
                 .setDescription('The command to reload.')
-                .setRequired(true)),
-    async execute(interaction) {
+                .setRequired(true));
+
+
+module.exports.execute = async function handleReload(interaction) {
         if (interaction.user.id !== config.adminId) {
             return interaction.reply({ content: `You do not have permission to use this command`, ephemeral: true });
         }
@@ -25,13 +25,13 @@ module.exports = {
         }
 
         // Dynamically find the command file based on its name and category
-        const commandFolders = fs.readdirSync(path.join(__dirname, '..'));
+        const commandFolders = fs.readdirSync(path.join(__dirname, '..', '..'));
         let filePath;
         for (const folder of commandFolders) {
             try {
-                const commandFiles = fs.readdirSync(path.join(__dirname, '..', folder)).filter(file => file.endsWith('.js'));
+                const commandFiles = fs.readdirSync(path.join(__dirname, '..', '..', folder)).filter(file => file.endsWith('.js'));
                 if (commandFiles.includes(`${commandName}.js`)) {
-                    filePath = `../${folder}/${commandName}.js`;
+                    filePath = `../../${folder}/${commandName}.js`;
                     break;
                 }
             } catch (error) {
@@ -52,5 +52,4 @@ module.exports = {
             console.error(error);
             await interaction.reply(`There was an error while reloading a command \`${commandName}\`:\n\`${error.message}\``);
         }
-    },
 };
