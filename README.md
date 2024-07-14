@@ -11,5 +11,3 @@ This Discord bot is a personal project created for experimenting with Discord.js
 - SQLite3 database for user info
 
 ## TODO
-
-- Add a more modular way of adding API's
