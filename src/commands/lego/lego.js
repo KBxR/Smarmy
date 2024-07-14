@@ -2,14 +2,14 @@ const { SlashCommandBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
-const commandFiles = fs.readdirSync(path.join(__dirname, 'subcommands')).filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync(path.join(__dirname, 'lego')).filter(file => file.endsWith('.js'));
 
 const command = new SlashCommandBuilder()
     .setName('lego')
     .setDescription('LEGO!!!!!!');
 
 for (const file of commandFiles) {
-    const commandData = require(`./subcommands/${file}`);
+    const commandData = require(`./lego/${file}`);
     command.addSubcommand(() => commandData.data);
 }
 
@@ -18,7 +18,7 @@ module.exports = {
     data: command,
     async execute(interaction) {
         const subcommand = interaction.options.getSubcommand();
-        const commandFile = require(`./subcommands/${subcommand}.js`);
+        const commandFile = require(`./lego/${subcommand}.js`);
         await commandFile.execute(interaction);
     }
 };
