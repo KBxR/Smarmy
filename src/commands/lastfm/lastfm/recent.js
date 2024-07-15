@@ -1,6 +1,6 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const DBHandler = require('@utils/DBHandler');
-const { getLastFmUser, getRecentTrack } = require('@api/lastFm');
+const { getLastFmUser, getRecentTracks } = require('@api/lastFm');
 const resolveUsername = require('../utils/usernameResolver');
 
 module.exports.data = new SlashCommandSubcommandBuilder()
@@ -31,12 +31,17 @@ module.exports.execute = async function handleRecent(interaction) {
             return interaction.reply({ content: 'The Last.fm username does not exist.', ephemeral: true });
         }
 
-        const res = await getRecentTrack(username);
+        const resTrack = await getRecentTracks(username);
         
+        const res = resTrack[0];
+
+        const isCurrentlyPlaying = res['@attr'] && res['@attr'].nowplaying === 'true';
+        const title = isCurrentlyPlaying ? `${username}'s Currently Playing Track` : `${username}'s Recently Played Track`;
+
         const artistSplit = res.url.split('_');
         const recentEmbed = new EmbedBuilder()
             .setColor('#e4141e')
-            .setTitle(`${username}'s Recently Played Track`)
+            .setTitle(title)
             .setAuthor({ name: `${username}`, iconURL: `${resUser.image[0]['#text']}`, url: `${resUser.url}` })
             .addFields(
                 { name: 'Artist', value: `[${res.artist['#text']}](${artistSplit[0]})`, inline: false },

@@ -28,9 +28,10 @@ async function getLastFmUser(username) {
     return data.user;
 }
 
-async function getRecentTrack(username) {
-    const data = await makeLastFmApiCall('user.getRecentTracks', `&user=${username}&nowplaying=true&limit=1`);
-    return data.recenttracks.track[0];
+async function getRecentTracks(username, length) {
+    length = length || 1;
+    const data = await makeLastFmApiCall('user.getRecentTracks', `&user=${username}&nowplaying=true&limit=${length}`);
+    return data.recenttracks.track;
 }
 
 async function getArtistInfo(artist) {
@@ -53,4 +54,4 @@ async function getTopAlbums(username) {
     return data.topalbums.album;
 }
 
-module.exports = { getArtistInfo, getTopTracks, getTopAlbums, getArtistInfoWUsername, getRecentTrack, getLastFmUser, getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles };
+module.exports = { getArtistInfo, getTopTracks, getTopAlbums, getArtistInfoWUsername, getRecentTracks, getLastFmUser, getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles };
