@@ -1,7 +1,7 @@
 const { SlashCommandSubcommandBuilder } = require('@discordjs/builders');
 const { ActivityType } = require('discord.js');
 const axios = require('axios');
-const DBHandler = require('@utils/DBHandler');
+const { DBHandler } = require('@utils');
 
 // Map between status type and ActivityType
 const activityTypeMap = {

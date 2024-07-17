@@ -1,8 +1,7 @@
 const { SlashCommandSubcommandBuilder } = require('discord.js');
-const DBHandler = require('@utils/DBHandler');
 const { createCanvas, loadImage } = require('canvas');
 const { getRecentTracks } = require('@api/lastFm');
-const resolveUsername = require('../utils/usernameResolver');
+const { resolveUsername, DBHandler } = require('@utils');
 
 module.exports.data = new SlashCommandSubcommandBuilder()
     .setName('canvastest')

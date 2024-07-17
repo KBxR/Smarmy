@@ -10,7 +10,7 @@ const client = new Client({
         GatewayIntentBits.MessageContent
     ]
 });
-const config = require('@config/config');
+const config = require('@config');
 
 client.commands = new Collection();
 

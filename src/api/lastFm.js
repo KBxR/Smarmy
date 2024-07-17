@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { lastFmKey } = require('@config/config');
+const { lastFmKey } = require('@config');
 
 async function makeLastFmApiCall(method, params) {
     const baseUrl = `http://ws.audioscrobbler.com/2.0/`;
@@ -49,8 +49,9 @@ async function getTopTracks(username) {
     return data.toptracks.track;
 }
 
-async function getTopAlbums(username) {
-    const data = await makeLastFmApiCall('user.gettopalbums', `&user=${username}&limit=10`);
+async function getTopAlbums(username, length) {
+    length = length || 10;
+    const data = await makeLastFmApiCall('user.gettopalbums', `&user=${username}&limit=${length}`);
     return data.topalbums.album;
 }
 

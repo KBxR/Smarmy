@@ -1,6 +1,5 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
-const DBHandler = require('@utils/DBHandler');
-const resolveUsername = require('../utils/usernameResolver');
+const { resolveUsername, DBHandler } = require('@utils');
 const { getRecentTracks, getLastFmUser } = require('@api/lastFm.js');
 
 module.exports.data = new SlashCommandSubcommandBuilder()

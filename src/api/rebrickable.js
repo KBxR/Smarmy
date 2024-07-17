@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { rebrickKey } = require('@config/config');
+const { rebrickKey } = require('@config');
 
 async function makeRebrickableApiCall(method, params) {
     const baseUrl = `https://rebrickable.com/api/v3/lego/`;
