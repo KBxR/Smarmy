@@ -72,62 +72,62 @@ module.exports.execute = async function(interaction) {
     try {
         const imageSize = 250; // Consider reducing this if memory issues persist
         const totalTracks = tracksHorizontal * tracksHorizontal;
-
+        
         const tracks = await getRecentTracks(username, totalTracks);
         const canvas = createCanvas(canvasSize, canvasSize);
         const ctx = canvas.getContext('2d');
-
-        for (let i = 0; i < tracks.length; i++) {
-            const track = tracks[i];
-            const imageUrl = track.image[2]['#text'];
-            const artistName = track.artist['#text'];
-            const songName = track.name;
+        ctx.font = '15px Lato'; // Set font once
+        ctx.textAlign = 'center'; // Set text alignment once
         
-            try {
-                const img = await loadImage(imageUrl);
-                const x = (i % tracksHorizontal) * imageSize;
-                const y = Math.floor(i / tracksHorizontal) * imageSize;
+        // Preload images
+        const images = await Promise.all(tracks.map(track => loadImage(track.image[2]['#text']).catch(err => console.error('Error loading image:', err))));
+        
+        // Cache for text measurements to avoid recalculating
+        const textMeasurements = {};
+    
+        tracks.forEach((track, i) => {
+            const img = images[i]; // Use preloaded image
+            if (!img) return; // Skip if image failed to load
+        
+            const x = (i % tracksHorizontal) * imageSize;
+            const y = Math.floor(i / tracksHorizontal) * imageSize;
+            ctx.drawImage(img, x, y, imageSize, imageSize);
+        
+            const textKey = `${track.artist['#text']}-${track.name}`;
+            if (!textMeasurements[textKey]) {
                 const padding = 10;
-                ctx.drawImage(img, x, y, imageSize, imageSize);
-            
-                // Calculate average brightness of the image
-                const brightness = calculateAverageBrightness(img);
-                // Choose background color based on brightness
-                const backgroundColor = chooseBackgroundColor(brightness);
-            
-                // Set text style
-                ctx.font = '20px Arial';
-                ctx.textAlign = 'center';
-            
-                // Calculate text positions
-                const textX = x + imageSize / 2;
-                const artistTextY = y + imageSize - 30; // Position for artist name
-                const songTextY = y + imageSize - 5; // Position for song name
-            
-                // Measure text for background size calculation
-                const artistMetrics = ctx.measureText(artistName);
-                const songMetrics = ctx.measureText(songName);
-                const maxTextWidth = Math.max(artistMetrics.width, songMetrics.width) + padding;
-            
-                // Draw background rectangle for text with dynamic color
-                ctx.fillStyle = backgroundColor === 'black' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.6)';
-                ctx.fillRect(textX - (maxTextWidth / 2), artistTextY - 20, maxTextWidth, 50); // Adjust height to cover both lines
-            
-                // Adjust text color based on background color for better readability
-                ctx.fillStyle = backgroundColor === 'black' ? 'white' : 'black';
-            
-                // Draw artist name
-                ctx.fillText(artistName, textX, artistTextY, imageSize - 10);
-            
-                // Draw song name
-                ctx.fillText(songName, textX, songTextY, imageSize - 10);
-            } catch (imgError) {
-                console.error('Error loading image:', imgError);
+                const artistTextWidth = ctx.measureText(track.artist['#text']).width + padding;
+                const songTextWidth = ctx.measureText(track.name).width + padding;
+                const maxTextWidth = Math.max(artistTextWidth, songTextWidth);
+                textMeasurements[textKey] = { artistTextWidth, songTextWidth, maxTextWidth };
             }
-        }
+        
+            const textX = x + imageSize / 2;
+            const artistTextY = y + imageSize - 30;
+            const songTextY = y + imageSize - 5;
+            const backgroundX = textX - (maxTextWidth / 2);
+            const backgroundWidth = maxTextWidth;
+        
+            // Grouped drawing operations
+            const brightness = calculateAverageBrightness(img);
+            const backgroundColor = chooseBackgroundColor(brightness);
+            ctx.fillStyle = backgroundColor === 'black' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.6)';
+            ctx.fillRect(backgroundX, artistTextY - 20, backgroundWidth, 50);
+        
+            ctx.fillStyle = backgroundColor === 'black' ? 'white' : 'black';
+            ctx.fillText(track.artist['#text'], textX, artistTextY, imageSize - 10);
+            ctx.fillText(track.name, textX, songTextY, imageSize - 10);
+        });
 
         const attachment = canvas.toBuffer();
-        await interaction.reply({ files: [{ attachment, name: 'imageSquare.png' }] });
+
+        const canvasEmbed = new EmbedBuilder()
+            .setColor('#e4141e')
+            .setTitle(title)
+            .setAuthor({ name: `${username}`, iconURL: `${resUser.image[0]['#text']}`, url: `${resUser.url}` })
+            .setFooter({ text: `Total Scrobbles: ${resUser.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
+
+        await interaction.reply({ embeds: [canvasEmbed], files: [{ attachment, name: 'imageSquare.png' }] });
     } catch (error) {
         console.error('Error creating image square:', error);
         await interaction.reply({ content: 'An error occurred while creating the image square. Please try again later.', ephemeral: true });
