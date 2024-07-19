@@ -39,6 +39,11 @@ async function getTopTracks(username, length, period) {
     return data.toptracks.track;
 }
 
+async function getTrackInfo(artist, track) {
+    const data = await makeLastFmApiCall('track.getInfo', `&artist=${artist}&track=${track}`);
+    return data.track;
+}
+
 // ARTIST METHODS
 
 // Gets the weekly top artists of a user
@@ -68,10 +73,10 @@ async function getArtistInfoWUsername(artist, username) {
 // ALBUM METHODS
 
 // Gets the top albums of a user
-async function getTopAlbums(username, length) {
+async function getTopAlbums(username, length, period) {
     length = length || 10;
-    const data = await makeLastFmApiCall('user.gettopalbums', `&user=${username}&limit=${length}`);
+    const data = await makeLastFmApiCall('user.gettopalbums', `&user=${username}&limit=${length}&period=${period}`);
     return data.topalbums.album;
 }
 
-module.exports = { getArtistInfo, getTopTracks, getTopAlbums, getArtistInfoWUsername, getRecentTracks, getLastFmUser, getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles };
+module.exports = { getArtistInfo, getTopTracks, getTopAlbums, getArtistInfoWUsername, getRecentTracks, getLastFmUser, getWeeklyTopArtists, getTopArtists, getWeeklyScrobbles, getTrackInfo };
