@@ -3,74 +3,56 @@ const { SlashCommandSubcommandBuilder } = require('@discordjs/builders');
 module.exports = {
     data: new SlashCommandSubcommandBuilder()
         .setName('call')
-        .setDescription('Start or stop a call')
-        .addStringOption(option =>
-            option.setName('action')
-                .setDescription('Start or stop a call')
-                .setRequired(true)
-                .addChoices(
-                    { name: 'start', value: 'start' },
-                    { name: 'stop', value: 'stop' }
-                )),
+        .setDescription('Toggle a call on or off'),
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: false });
-        const action = interaction.options.getString('action');
         const serverId = interaction.guild.id;
         const channelId = interaction.channel.id;
-        
+
         if (!global.activeCalls) global.activeCalls = {};
-        
-        if (action === 'start') {
-            if (Object.values(global.activeCalls).flat().includes(channelId)) {
-                await interaction.editReply({ content: 'This channel is already in a call.' });
-                return;
+
+        // Check if the channel is already in a call
+        if (Object.values(global.activeCalls).flat().includes(channelId)) {
+            // Stop the call
+            const connectedChannelId = global.activeCalls[serverId].find(id => id !== channelId);
+            delete global.activeCalls[serverId];
+            if (connectedChannelId) {
+                const otherServerId = Object.keys(global.activeCalls).find(key => global.activeCalls[key].includes(connectedChannelId));
+                if (otherServerId) delete global.activeCalls[otherServerId];
+                await interaction.editReply({ content: 'Call ended. You are now disconnected.' });
+            
+                // Fetch the connected channel and send a notification
+                const connectedChannel = await interaction.client.channels.fetch(connectedChannelId);
+                if (connectedChannel) {
+                    await connectedChannel.send('The call was ended by the other party.');
+                }
+            } else {
+                await interaction.editReply({ content: 'Call stopped. There was no connected channel.' });
             }
-        
-            let connectedChannelId = null;
+        } else {
+            // Attempt to start a call
+            // Check if there's a waiting channel in any server
+            let waitingChannelId = null;
             for (const [key, value] of Object.entries(global.activeCalls)) {
-                if (key !== serverId && value.length === 1) {
-                    connectedChannelId = value[0];
+                if (value.length === 1) {
+                    waitingChannelId = value[0];
                     break;
                 }
             }
-        
-            if (connectedChannelId) {
-                global.activeCalls[serverId] = [channelId, connectedChannelId];
-                const otherServerId = Object.keys(global.activeCalls).find(key => global.activeCalls[key].includes(connectedChannelId));
+
+            if (waitingChannelId) {
+                // Connect to the waiting channel
+                global.activeCalls[serverId] = [channelId, waitingChannelId];
+                const otherServerId = Object.keys(global.activeCalls).find(key => global.activeCalls[key].includes(waitingChannelId));
                 if (otherServerId) {
-                    global.activeCalls[otherServerId] = [connectedChannelId, channelId];
+                    global.activeCalls[otherServerId].push(channelId);
                 }
-                await interaction.editReply({ content: 'Call started. You are now connected to another channel.' });
-        
-                const channelsInvolved = [channelId, connectedChannelId];
-                for (const chId of channelsInvolved) {
-                    const channel = await interaction.client.channels.fetch(chId).catch(console.error);
-                    if (channel) {
-                        try {
-                            await channel.send("You are now connected to another channel.");
-                        } catch (error) {
-                            console.error(`Failed to send connection message to channel ${chId}: ${error}`);
-                        }
-                    }
-                }
+                await interaction.editReply({ content: 'Call started. You are now connected to another channel. Say Hi!' });
             } else {
+                // No waiting channel, so mark this channel as waiting
                 global.activeCalls[serverId] = [channelId];
-                await interaction.editReply({ content: 'Waiting for another channel to connect.' });
-            }
-        } else if (action === 'stop') {
-            if (global.activeCalls[serverId] && global.activeCalls[serverId].includes(channelId)) {
-                const connectedChannelId = global.activeCalls[serverId].find(id => id !== channelId);
-                delete global.activeCalls[serverId];
-                if (connectedChannelId) {
-                    const otherServerId = Object.keys(global.activeCalls).find(key => global.activeCalls[key].includes(connectedChannelId));
-                    if (otherServerId) delete global.activeCalls[otherServerId];
-                    await interaction.editReply({ content: 'Call stopped. You are now disconnected.' });
-                } else {
-                    await interaction.editReply({ content: 'Call stopped. There was no connected channel.' });
-                }
-            } else {
-                await interaction.editReply({ content: 'This channel is not currently in a call.' });
+                await interaction.editReply({ content: 'Call started. Waiting for another channel to connect.' });
             }
         }
-    },
+    }
 };

@@ -24,7 +24,7 @@ module.exports = {
             await Promise.all(connectedChannelIds.map(async (connectedChannelId) => {
                 try {
                     const targetChannel = await message.client.channels.fetch(connectedChannelId);
-                    await targetChannel.send(`<@${message.author.id}>: ${message.content}`);
+                    await targetChannel.send(`${message.author.username}🗣 ${message.content}`);
                 } catch (error) {
                     console.error(`Failed to send message to the connected channel: ${error}`);
                 }
