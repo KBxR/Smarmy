@@ -62,7 +62,7 @@ function getFontSize(text) {
     return '12px'; // Smaller font for long text
 }
 
-module.exports.execute = async function(interaction) {
+module.exports.execute = async function handleCanvas(interaction) {
     await interaction.deferReply({ ephemeral: false });
     const defaultImageUrl = "https://lastfm.freetls.fastly.net/i/u/300x300/c6f59c1e5e7240a4c0d427abd71f3dbb.jpg";
 
