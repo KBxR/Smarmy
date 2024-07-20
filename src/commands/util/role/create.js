@@ -1,11 +1,29 @@
-const { EmbedBuilder } = require('discord.js');
+const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
-const { getBotInfo } = require('@utils/botInfoUtil');
+const { getBotInfo, getRandomHexColor } = require('@utils');
 
-module.exports = async function handleRoleCreate(interaction) {
+module.exports.data = new SlashCommandSubcommandBuilder()
+    .setName('create')
+    .setDescription('Creates a role with given hex code')
+    .addStringOption(option =>
+        option.setName('rolename')
+            .setDescription('Name of the role to create')
+            .setRequired(true))
+    .addStringOption(option =>
+        option.setName('hexcode')
+            .setDescription('Hex color code (Defaults to a random color)'))
+    .addAttachmentOption(option =>
+        option.setName('icon')
+            .setDescription('The icon image file (optional)'));
+
+module.exports.execute = async function handleRoleCreate(interaction) {
     const name = interaction.options.getString('rolename');
-    const color = interaction.options.getString('hexcode');
+    let color = interaction.options.getString('hexcode');
     const roleIcon = interaction.options.getAttachment('icon');
+
+    if (!color) {
+        color = getRandomHexColor().slice(1);
+    }
 
     try {
         const role = await interaction.guild.roles.create({ name, color });

@@ -1,7 +1,19 @@
-const { EmbedBuilder } = require('discord.js');
-const { getBotInfo } = require('@utils/botInfoUtil');
+const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
+const { getBotInfo } = require('@utils');
 
-module.exports = async function handleRoleRemove(interaction) {
+module.exports.data = new SlashCommandSubcommandBuilder()
+    .setName('remove')
+    .setDescription('Removes a role from a user')
+    .addRoleOption(option =>
+        option.setName('role')
+            .setDescription('Name of the role to remove')
+            .setRequired(true))
+    .addUserOption(option =>
+        option.setName('user')
+            .setDescription('The user you want to remove the role from')
+            .setRequired(true));
+
+module.exports.execute = async function handleRoleRemove(interaction) {
     const role = interaction.options.getRole('role');
     const user = interaction.options.getUser('user');
     const member = interaction.options.getMember('user');

@@ -1,7 +1,19 @@
-const { EmbedBuilder } = require('discord.js');
+const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
 
-module.exports = async function handleRoleIcon(interaction) {
+module.exports.data = new SlashCommandSubcommandBuilder()
+    .setName('icon')
+    .setDescription('Sets the icon of a specified role')
+    .addRoleOption(option =>
+        option.setName('role')
+            .setDescription('The role to set the icon for')
+            .setRequired(true))
+    .addAttachmentOption(option =>
+        option.setName('icon')
+            .setDescription('The icon image file')
+            .setRequired(true));
+
+module.exports.execute = async function handleRoleIcon(interaction) {
 
         const role = interaction.options.getRole('role');
         const iconAttachment = interaction.options.getAttachment('icon');

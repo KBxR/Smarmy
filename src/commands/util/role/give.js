@@ -1,7 +1,19 @@
-const { EmbedBuilder } = require('discord.js');
-const { getBotInfo } = require('@utils/botInfoUtil');
+const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
+const { getBotInfo } = require('@utils');
 
-module.exports = async function handleRoleGive(interaction) {
+module.exports.data = new SlashCommandSubcommandBuilder()
+    .setName('give')
+    .setDescription('Gives a role to a user')
+    .addRoleOption(option =>
+        option.setName('role')
+            .setDescription('Name of the role to give')
+            .setRequired(true))
+    .addUserOption(option =>
+        option.setName('user')
+            .setDescription('The user you want to give the role to')
+            .setRequired(true));
+
+module.exports.execute = async function handleRoleGive(interaction) {
     const role = interaction.options.getRole('role');
     const user = interaction.options.getUser('user');
     const member = interaction.options.getMember('user');
