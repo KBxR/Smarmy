@@ -63,7 +63,7 @@ module.exports.execute = async function handleCanvas(interaction) {
             buttonCollector(interaction, imageUrl, jumbledName, artistName);
 
             const embed = new EmbedBuilder()
-                .setColor('#e4141e')
+                .setColor('#b3b3b3')
                 .setTitle('Guess the Album')
                 .setDescription(`Guess the album from the pixelated image below. The album name has been jumbled up: \`${jumbledName}\``);
         

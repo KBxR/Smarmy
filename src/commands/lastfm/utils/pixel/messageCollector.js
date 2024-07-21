@@ -43,7 +43,7 @@ function messageCollector(interaction, albumName, imageUrl, randomAlbum) {
 
             const imageUrl = randomAlbum.image[3]['#text'];
             const failedEmbed = new EmbedBuilder()
-                .setColor('#ffd700')
+                .setColor('#b3b3b3')
                 .setTitle('Guess the Album - Failed!')
                 .setDescription(`The album was **${albumName}**`)
 

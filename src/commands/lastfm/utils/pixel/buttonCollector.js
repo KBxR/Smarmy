@@ -34,7 +34,7 @@ async function buttonCollector(interaction, imageUrl, jumbledName, artistName) {
                 // Pixelate the image with a higher scale factor for a hint
                 const hintAttachment = await pixelateImage(imageUrl, 0.3);
                 const hintEmbed = new EmbedBuilder()
-                    .setColor('#e4141e')
+                    .setColor('#b3b3b3')
                     .setTitle('Guess the Album - Hint')
                     .setDescription(`Guess the album from the pixelated image below. The album name has been jumbled up: \`${jumbledName}\``)
                     .addFields(
