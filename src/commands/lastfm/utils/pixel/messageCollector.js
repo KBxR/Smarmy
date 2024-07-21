@@ -2,7 +2,7 @@ const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('
 
 function messageCollector(interaction, albumName, imageUrl, randomAlbum) {
     const filter = m => m.author.id === interaction.user.id;
-    const messageCollector = interaction.channel.createMessageCollector({ filter, time: 60000 }); // Adjust time as needed
+    const messageCollector = interaction.channel.createMessageCollector({ filter, time: 45000 }); // Adjust time as needed
 
     messageCollector.on('collect', async m => {
         if (m.content.toLowerCase() === albumName.toLowerCase()) {
@@ -43,7 +43,7 @@ function messageCollector(interaction, albumName, imageUrl, randomAlbum) {
 
             const imageUrl = randomAlbum.image[3]['#text'];
             const failedEmbed = new EmbedBuilder()
-                .setColor('#b3b3b3')
+                .setColor('#e4141e')
                 .setTitle('Guess the Album - Failed!')
                 .setDescription(`The album was **${albumName}**`)
 
