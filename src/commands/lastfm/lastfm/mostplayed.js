@@ -1,6 +1,7 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const { getTopTracks, getTopArtists, getTopAlbums, getLastFmUser } = require('@api/lastFm');
-const { resolveUsername, DBHandler } = require('@utils');
+const { DBHandler } = require('@utils');
+const { resolveUsername } = require('@lastFmUtils');
 
 module.exports.data = new SlashCommandSubcommandBuilder()
     .setName('mostplayed')
