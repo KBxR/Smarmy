@@ -13,6 +13,8 @@ const config = {
     lastFmKey: process.env.LASTFM_KEY,
     lastFmSecret: process.env.LASTFM_SECRET,
     rebrickKey: process.env.REBRICK_KEY,
+    pinChannel: process.env.PIN_CHANNEL,
+    pinServer: process.env.PIN_SERVER,
 };
 
 module.exports = config;
