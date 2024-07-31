@@ -25,7 +25,7 @@ async function fetchReactionMessage(reaction) {
 }
 
 module.exports = {
-    eventName: 'Star To Channel',
+    eventName: 'Star Board',
     name: Events.MessageReactionAdd,
     async execute(reaction, user) {
         // Check if the reaction is a star
