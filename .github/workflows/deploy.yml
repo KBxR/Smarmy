@@ -19,14 +19,6 @@ jobs:
       - name: Print environment variables
         run: env
 
-      - name: Verify DockerHub credentials
-        run: |
-          echo "DOCKER_USERNAME is set"
-          echo "DOCKER_PASSWORD is set"
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
