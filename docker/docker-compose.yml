@@ -1,7 +1,13 @@
 version: '3.8'
 services:
   bot:
+    container_name: smarmy
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
     image: sicklesheen/smarmy:latest
+    working_dir: /usr/src/app
+    command: node src/bot.js
     environment:
       - NODE_ENV=production
       - BOT_TOKEN=$${BOT_TOKEN}
