@@ -26,20 +26,20 @@ module.exports.execute = async function handleUsername(interaction) {
 
         // Fetch user info from Last.fm
         const lastFmUser = await getLastFmUser(username);
-        if (!lastFmUser.data.user) {
+        if (!lastFmUser || !lastFmUser.name) {
+            console.log('Last.fm user not found:', lastFmUser);
             return interaction.reply({ content: 'The Last.fm username does not exist.', ephemeral: true });
         }
 
-        const userInfo = lastFmUser.data.user;
-        const profilePic = userInfo.image[userInfo.image.length - 1]['#text'];
-        const scrobbleCount = userInfo.playcount;
-        const accountCreationDate = new Date(userInfo.registered['#text'] * 1000).toLocaleDateString();
+        const profilePic = lastFmUser.image[lastFmUser.image.length - 1]['#text'];
+        const scrobbleCount = lastFmUser.playcount;
+        const accountCreationDate = new Date(lastFmUser.registered.unixtime * 1000).toLocaleDateString();
 
         // Create the embed
         const embed = new EmbedBuilder()
             .setColor('#e4141e')
             .setTitle('Last.fm Username Added/Updated')
-            .setAuthor({ name: username, iconURL: profilePic, url: userInfo.url })
+            .setAuthor({ name: username, iconURL: profilePic, url: lastFmUser.url })
             .addFields(
                 { name: 'Username', value: username, inline: true },
                 { name: 'Scrobble Count', value: scrobbleCount.toString(), inline: true },
@@ -49,14 +49,8 @@ module.exports.execute = async function handleUsername(interaction) {
             .setDescription(`Your Last.fm username has been saved/updated to \`${username}\`.`);
 
         interaction.reply({ embeds: [embed], ephemeral: true });
-
     } catch (error) {
-        console.error('Error:', error);
-        const detailedErrorUserId = '327885496036622347';
-        const errorMessage = userID === detailedErrorUserId && error.response && error.response.data && error.response.data.message
-            ? `An error occurred: ${error.response.data.message}`
-            : 'An error occurred, please try again later.';
-        
-        interaction.reply({ content: errorMessage, ephemeral: true });
+        console.error('Error handling username command:', error);
+        interaction.reply({ content: 'There was an error while processing your request.', ephemeral: true });
     }
 };
