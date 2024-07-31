@@ -44,6 +44,10 @@ jobs:
           push: true
           tags: sicklesheen/smarmy:latest
 
+      - name: Copy docker-compose.yml to remote server
+        run: |
+          sshpass -p ${{ secrets.UNRAID_PASSWORD }} scp -o StrictHostKeyChecking=no docker/docker-compose.yml root@${{ secrets.UNRAID_IP }}:/root/docker-compose.yml
+
       - name: Deploy to Unraid
         run: |
           sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -tt -o StrictHostKeyChecking=no root@${{ secrets.UNRAID_IP }} << EOF
@@ -58,5 +62,5 @@ jobs:
           export LASTFM_KEY=${{ secrets.LASTFM_KEY }}
           export LASTFM_SECRET=${{ secrets.LASTFM_SECRET }}
           export REBRICK_KEY=${{ secrets.REBRICK_KEY }}
-          docker-compose -f docker/docker-compose.yml up -d
+          docker-compose -f /root/docker-compose.yml up -d
           EOF
