@@ -42,24 +42,12 @@ const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'
 for (const file of eventFiles) {
     const filePath = path.join(eventsPath, file);
     const event = require(filePath);
-    console.log(`Loading event: ${event.name}`); // Log the event being loaded
+    console.log(`Loading event: ${event.eventName}`); // Log the event being loaded
     if (event.once) {
         client.once(event.name, (...args) => event.execute(...args));
     } else {
         client.on(event.name, (...args) => event.execute(...args));
     }
 }
-
-//Message Reaction Add Event
-client.on(Events.MessageReactionAdd, async (reaction, user) => {
-    if (reaction.partial) {
-        try {
-            await reaction.fetch();
-        } catch (error) {
-            console.error('Something went wrong when fetching the message:', error);
-            return;
-        }
-    }
-})
 
 client.login(config.token);
