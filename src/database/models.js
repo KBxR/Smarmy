@@ -1,10 +1,9 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const path = require('path');
+const { databasePath } = require('@config');
 
-// Initialize Sequelize with SQLite
-const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: path.join(__dirname, 'database.sqlite'),
+// Initialize Sequelize with PostgreSQL
+const sequelize = new Sequelize( databasePath, {
+  dialect: 'postgres',
   logging: false,
 });
 
@@ -15,6 +14,8 @@ const User = sequelize.define('User', {
         primaryKey: true,
     },
     lastFMUsername: DataTypes.STRING,
+}, {
+    timestamps: false,
 });
 
 const BotInfo = sequelize.define('BotInfo', {
@@ -23,6 +24,8 @@ const BotInfo = sequelize.define('BotInfo', {
         primaryKey: true,
     },
     value: DataTypes.STRING,
+}, {
+    timestamps: false,
 });
 
 // Sync all defined models with the database

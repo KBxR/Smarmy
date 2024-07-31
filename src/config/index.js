@@ -15,6 +15,7 @@ const config = {
     rebrickKey: process.env.REBRICK_KEY,
     pinChannel: process.env.PIN_CHANNEL,
     pinServer: process.env.PIN_SERVER,
+    databasePath: process.env.DATABASE_URL,
 };
 
 module.exports = config;
