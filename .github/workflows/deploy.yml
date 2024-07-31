@@ -46,7 +46,7 @@ jobs:
 
       - name: Deploy to Unraid
         run: |
-          sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ secrets.UNRAID_IP }} << EOF
+          sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -tt -o StrictHostKeyChecking=no root@${{ secrets.UNRAID_IP }} << EOF
           docker pull sicklesheen/smarmy:latest
           docker-compose -f docker/docker-compose.yml up -d
           EOF
