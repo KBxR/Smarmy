@@ -1,31 +1,37 @@
-# Use the official Node.js 18 image.
-# This sets the base image for your Docker container.
-FROM node:18
+FROM node:14
 
-# Create and change to the app directory.
-# This sets the working directory inside the container.
+# Create app directory
 WORKDIR /usr/src/app
 
-# Copy application dependency manifests to the container image.
-# A wildcard is used to ensure both package.json AND package-lock.json are copied.
+# Install app dependencies
 COPY package*.json ./
 
-# Install production dependencies.
-# This installs only the production dependencies listed in package.json.
-RUN npm install --only=production
+RUN npm install
 
-# Copy local code to the container image.
-# This copies the entire project directory into the container.
+# Bundle app source
 COPY . .
 
-# Copy the .env file
-# This ensures that your environment variables are available inside the container.
-COPY src/config/.env ./src/config/.env
+# Set environment variables
+ARG BOT_TOKEN
+ARG CLIENT_ID
+ARG GUILD_ID
+ARG ADMIN_ID
+ARG DATABASE_URL
+ARG PIN_SERVER
+ARG PIN_CHANNEL
+ARG LASTFM_KEY
+ARG LASTFM_SECRET
+ARG REBRICK_KEY
 
-# Copy the database file
-# This ensures that your SQLite database is available inside the container.
-COPY src/database/database.sqlite ./src/database/database.sqlite
+ENV BOT_TOKEN=$BOT_TOKEN
+ENV CLIENT_ID=$CLIENT_ID
+ENV GUILD_ID=$GUILD_ID
+ENV ADMIN_ID=$ADMIN_ID
+ENV DATABASE_URL=$DATABASE_URL
+ENV PIN_SERVER=$PIN_SERVER
+ENV PIN_CHANNEL=$PIN_CHANNEL
+ENV LASTFM_KEY=$LASTFM_KEY
+ENV LASTFM_SECRET=$LASTFM_SECRET
+ENV REBRICK_KEY=$REBRICK_KEY
 
-# Run the web service on container startup.
-# This sets the command to run your bot when the container starts.
-CMD [ "node", "src/bot.js" ]
+CMD ["node", "src/bot.js"]

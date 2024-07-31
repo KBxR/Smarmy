@@ -1,8 +1,6 @@
 node_modules/
 .env
-*.sqlite
 guilds.txt
 __pycache__/
 tempImage.jpg
-.dockerignore
 docker-compose.yml
