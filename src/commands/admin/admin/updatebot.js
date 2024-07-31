@@ -14,7 +14,7 @@ const activityTypeMap = {
 async function updateAvatar(image, newValue, client, interaction) {
     const avatarValue = image ? image.url : newValue;
     if (!avatarValue) {
-        return interaction.reply({ content: 'Please provide a valid URL or upload an image to update the avatar.', ephemeral: true });
+        return interaction.editReply({ content: 'Please provide a valid URL or upload an image to update the avatar.', ephemeral: true });
     }
 
     const response = image ? await axios.get(avatarValue, { responseType: 'arraybuffer' }) : null;
@@ -25,55 +25,59 @@ async function updateAvatar(image, newValue, client, interaction) {
     const avatarUrl = client.user.avatarURL();
     await DBHandler.saveBotInfo('avatar', avatarUrl);
 
-    return interaction.reply({ content: 'The bot\'s avatar has been updated.', ephemeral: true });
+    return interaction.editReply({ content: 'The bot\'s avatar has been updated.', ephemeral: true });
 }
 
 async function updateUsername(newValue, client, interaction) {
     if (!newValue) {
-        return interaction.reply({ content: 'Please provide a new username.', ephemeral: true });
+        return interaction.editReply({ content: 'Please provide a new username.', ephemeral: true });
     }
     await client.user.setUsername(newValue);
 
     // Store username in the database
     await DBHandler.saveBotInfo('username', newValue);
 
-    return interaction.reply({ content: 'The bot\'s username has been updated.', ephemeral: true });
+    return interaction.editReply({ content: 'The bot\'s username has been updated.', ephemeral: true });
 }
 
 async function updateStatus(newValue, statusType, client, interaction, activityTypeMap) {
     if (!newValue || !statusType) {
-        return interaction.reply({ content: 'Please provide both a new status and status type.', ephemeral: true });
+        return interaction.editReply({ content: 'Please provide both a new status and status type.', ephemeral: true });
     }
-
+    
     // Store status type and name in the database
     await DBHandler.saveBotInfo('status_type', statusType);
     await DBHandler.saveBotInfo('status_name', newValue);
-
+    
     // Set the bot's presence immediately
     client.user.setActivity(newValue, { type: activityTypeMap[statusType] });
-
-    return interaction.reply({ content: 'The bot\'s status has been updated.', ephemeral: true });
-}
-
-async function handleUpdate(updateType, image, newValue, statusType, client, interaction, activityTypeMap) {
-    try {
-        switch (updateType) {
-            case 'avatar':
-                return await updateAvatar(image, newValue, client, interaction);
-            case 'username':
-                return await updateUsername(newValue, client, interaction);
-            case 'status':
-                return await updateStatus(newValue, statusType, client, interaction, activityTypeMap);
-            default:
-                return interaction.reply({ content: 'Invalid update type.', ephemeral: true });
-        }
-    } catch (error) {
-        console.error('Error updating bot:', error);
-        return interaction.reply({ content: 'An error occurred while updating the bot. Please try again later.', ephemeral: true });
+    
+    return interaction.editReply({ content: 'The bot\'s status has been updated.', ephemeral: true });
     }
-}
-
-module.exports.data = new SlashCommandSubcommandBuilder()
+    
+    async function handleUpdate(updateType, image, newValue, statusType, client, interaction, activityTypeMap) {
+        try {
+    
+            switch (updateType) {
+                case 'avatar':
+                    await updateAvatar(image, newValue, client, interaction);
+                    break;
+                case 'username':
+                    await updateUsername(newValue, client, interaction);
+                    break;
+                case 'status':
+                    await updateStatus(newValue, statusType, client, interaction, activityTypeMap);
+                    break;
+                default:
+                    return interaction.editReply({ content: 'Invalid update type.', ephemeral: true });
+            }
+        } catch (error) {
+            console.error('Error updating bot:', error);
+            return interaction.editReply({ content: 'An error occurred while updating the bot. Please try again later.', ephemeral: true });
+        }
+    }
+    
+    module.exports.data = new SlashCommandSubcommandBuilder()
         .setName('updatebot')
         .setDescription('Update the bot\'s avatar, username, or status.')
         .addStringOption(option =>
@@ -92,17 +96,7 @@ module.exports.data = new SlashCommandSubcommandBuilder()
         )
         .addStringOption(option =>
             option.setName('status_type')
-                .setDescription('The type of status (e.g., "Playing", "Watching", "Streaming", "Listening")')
-                .addChoices(
-                    { name: 'Playing', value: 'Playing' },
-                    { name: 'Watching', value: 'Watching' },
-                    { name: 'Streaming', value: 'Streaming' },
-                    { name: 'Listening', value: 'Listening' }
-                )
-        )
-        .addAttachmentOption(option =>
-            option.setName('image')
-                .setDescription('The image to set as the new avatar')
+                .setDescription('The type of status (Playing, Watching, Streaming, Listening)')
         );
         
 module.exports.execute = async function handleUpdateBot(interaction) {
@@ -111,13 +105,20 @@ module.exports.execute = async function handleUpdateBot(interaction) {
         const statusType = interaction.options.getString('status_type');
         const image = interaction.options.getAttachment('image');
 
+        await interaction.deferReply({ ephemeral: true });
+
         try {
             const client = interaction.client;
+
+            // Check if the file size is larger than 10,240 KB (10 MB)
+            if (image && image.size > 10240 * 1024) {
+                return interaction.editReply({ content: 'The uploaded file is too large. Please upload a file smaller than 10 MB.', ephemeral: true });
+            }
 
             return await handleUpdate(updateType, image, newValue, statusType, client, interaction, activityTypeMap);
             
         } catch (error) {
             console.error('Error updating bot:', error);
-            return interaction.reply({ content: 'An error occurred while updating the bot. Please try again later.', ephemeral: true });
+            return interaction.editReply({ content: 'An error occurred while updating the bot. Please try again later.', ephemeral: true });
         }
 };
