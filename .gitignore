@@ -4,4 +4,6 @@ node_modules/
 guilds.txt
 __pycache__/
 tempImage.jpg
+.dockerignore
+docker-compose.yml
 Dockerfile
