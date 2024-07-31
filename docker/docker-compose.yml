@@ -4,13 +4,13 @@ services:
     image: sicklesheen/smarmy:latest
     environment:
       - NODE_ENV=production
-      - BOT_TOKEN=${{ secrets.BOT_TOKEN }}
-      - CLIENT_ID=${{ secrets.CLIENT_ID }}
-      - GUILD_ID=${{ secrets.GUILD_ID }}
-      - ADMIN_ID=${{ secrets.ADMIN_ID }}
-      - DATABASE_URL=${{ secrets.DATABASE_URL }}
-      - PIN_SERVER=${{ secrets.PIN_SERVER }}
-      - PIN_CHANNEL=${{ secrets.PIN_CHANNEL }}
-      - LASTFM_KEY=${{ secrets.LASTFM_KEY }}
-      - LASTFM_SECRET=${{ secrets.LASTFM_SECRET }}
-      - REBRICK_KEY=${{ secrets.REBRICK_KEY }}
+      - BOT_TOKEN=$${BOT_TOKEN}
+      - CLIENT_ID=$${CLIENT_ID}
+      - GUILD_ID=$${GUILD_ID}
+      - ADMIN_ID=$${ADMIN_ID}
+      - DATABASE_URL=$${DATABASE_URL}
+      - PIN_SERVER=$${PIN_SERVER}
+      - PIN_CHANNEL=$${PIN_CHANNEL}
+      - LASTFM_KEY=$${LASTFM_KEY}
+      - LASTFM_SECRET=$${LASTFM_SECRET}
+      - REBRICK_KEY=$${REBRICK_KEY}
