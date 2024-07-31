@@ -3,6 +3,7 @@ const { User } = require('@database/models');
 const { getBotInfo } = require('@utils/botInfoUtil');
 
 module.exports = {
+    eventName: 'Ready',
     name: Events.ClientReady,
     once: true,
     async execute(client) {

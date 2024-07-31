@@ -1,6 +1,7 @@
 const { Events } = require('discord.js');
 
 module.exports = {
+    eventName: 'Phone Call Listener',
     name: Events.MessageCreate,
     async execute(message) {
         if (message.author.bot || !message.content) return;
