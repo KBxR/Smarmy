@@ -9,7 +9,7 @@ COPY package*.json ./
 RUN npm install
 
 # Bundle app source
-COPY . .
+COPY src /usr/src/app/src
 
 # Set environment variables
 ARG BOT_TOKEN
