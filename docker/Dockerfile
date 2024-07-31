@@ -9,7 +9,7 @@ COPY package*.json ./
 RUN npm install
 
 # Bundle app source
-COPY src /usr/src/app/src
+COPY . .
 
 # Set environment variables
 ARG BOT_TOKEN
@@ -34,4 +34,4 @@ ENV LASTFM_KEY=$LASTFM_KEY
 ENV LASTFM_SECRET=$LASTFM_SECRET
 ENV REBRICK_KEY=$REBRICK_KEY
 
-CMD ["node", "src/bot.js"]
+CMD ["node", "bot.js"]
