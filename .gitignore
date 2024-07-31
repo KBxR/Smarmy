@@ -6,4 +6,3 @@ __pycache__/
 tempImage.jpg
 .dockerignore
 docker-compose.yml
-Dockerfile
