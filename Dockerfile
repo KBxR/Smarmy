@@ -11,8 +11,6 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-# Debugging step to list contents of the directory
-RUN ls -R /usr/src/app
 
 # Set environment variables
 ARG BOT_TOKEN
