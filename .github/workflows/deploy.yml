@@ -46,7 +46,7 @@ jobs:
 
       - name: Copy docker-compose.yml to remote server
         run: |
-          sshpass -p ${{ secrets.UNRAID_PASSWORD }} scp -o StrictHostKeyChecking=no docker/docker-compose.yml root@${{ secrets.UNRAID_IP }}:/root/docker-compose.yml
+          sshpass -p ${{ secrets.UNRAID_PASSWORD }} scp -o StrictHostKeyChecking=no docker-compose.yml root@${{ secrets.UNRAID_IP }}:/root/docker-compose.yml
 
       - name: Deploy to Unraid
         run: |
