@@ -54,3 +54,6 @@ jobs:
           export REBRICK_KEY=${{ secrets.REBRICK_KEY }}
           docker-compose -f /root/docker-compose.yml up -d
           EOF
+      - name: Check if the app is running
+        run: |
+          sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ secrets.UNRAID_IP }} docker ps | grep smarmy
