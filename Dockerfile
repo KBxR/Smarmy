@@ -1,29 +1,14 @@
-FROM node:20
-
-# Create app directory
+# Stage 1: Install dependencies
+FROM node:20 AS builder
 WORKDIR /usr/src/app
-
-# Install app dependencies
 COPY package*.json ./
-
 RUN npm install
 
-# Bundle app source
+# Stage 2: Copy source and build
+FROM node:20
+WORKDIR /usr/src/app
+COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY . .
-
-
-# Set environment variables
-ARG BOT_TOKEN
-ARG CLIENT_ID
-ARG GUILD_ID
-ARG ADMIN_ID
-ARG DATABASE_URL
-ARG PIN_SERVER
-ARG PIN_CHANNEL
-ARG LASTFM_KEY
-ARG LASTFM_SECRET
-ARG REBRICK_KEY
-
 ENV BOT_TOKEN=$BOT_TOKEN
 ENV CLIENT_ID=$CLIENT_ID
 ENV GUILD_ID=$GUILD_ID
@@ -34,5 +19,4 @@ ENV PIN_CHANNEL=$PIN_CHANNEL
 ENV LASTFM_KEY=$LASTFM_KEY
 ENV LASTFM_SECRET=$LASTFM_SECRET
 ENV REBRICK_KEY=$REBRICK_KEY
-
 CMD ["node", "src/bot.js"]
