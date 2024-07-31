@@ -11,6 +11,9 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+# Debugging step to list contents of the directory
+RUN ls -R /usr/src/app
+
 # Set environment variables
 ARG BOT_TOKEN
 ARG CLIENT_ID
@@ -34,4 +37,4 @@ ENV LASTFM_KEY=$LASTFM_KEY
 ENV LASTFM_SECRET=$LASTFM_SECRET
 ENV REBRICK_KEY=$REBRICK_KEY
 
-CMD ["node", "bot.js"]
+CMD ["node", "src/bot.js"]
