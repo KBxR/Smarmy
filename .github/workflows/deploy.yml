@@ -30,11 +30,11 @@ jobs:
         with:
           context: .
           push: true
-          tags: your-dockerhub-username/discord-bot:latest
+          tags: sicklesheen/smarmy:latest
 
       - name: Deploy to Unraid
         run: |
           sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ secrets.UNRAID_IP }} << EOF
-          docker pull your-dockerhub-username/discord-bot:latest
+          docker pull sicklesheen/smarmy:latest
           docker-compose -f /path/to/your/docker-compose.yml up -d
           EOF
