@@ -4,19 +4,19 @@ services:
     container_name: smarmy
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: Dockerfile
     image: sicklesheen/smarmy:latest
     working_dir: /usr/src/app
     command: node src/bot.js
     environment:
       - NODE_ENV=production
-      - BOT_TOKEN=$${BOT_TOKEN}
-      - CLIENT_ID=$${CLIENT_ID}
-      - GUILD_ID=$${GUILD_ID}
-      - ADMIN_ID=$${ADMIN_ID}
-      - DATABASE_URL=$${DATABASE_URL}
-      - PIN_SERVER=$${PIN_SERVER}
-      - PIN_CHANNEL=$${PIN_CHANNEL}
-      - LASTFM_KEY=$${LASTFM_KEY}
-      - LASTFM_SECRET=$${LASTFM_SECRET}
-      - REBRICK_KEY=$${REBRICK_KEY}
+      - BOT_TOKEN=${BOT_TOKEN}
+      - CLIENT_ID=${CLIENT_ID}
+      - GUILD_ID=${GUILD_ID}
+      - ADMIN_ID=${ADMIN_ID}
+      - DATABASE_URL=${DATABASE_URL}
+      - PIN_SERVER=${PIN_SERVER}
+      - PIN_CHANNEL=${PIN_CHANNEL}
+      - LASTFM_KEY=${LASTFM_KEY}
+      - LASTFM_SECRET=${LASTFM_SECRET}
+      - REBRICK_KEY=${REBRICK_KEY}
