@@ -3,4 +3,3 @@ node_modules/
 guilds.txt
 __pycache__/
 tempImage.jpg
-docker-compose.yml
