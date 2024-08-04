@@ -8,11 +8,11 @@ client.connect();
 
 function setupDatabase(serverId) {
     client.query(`
-        CREATE TABLE IF NOT EXISTS whitelisted_permissions (
+        CREATE TABLE IF NOT EXISTS permissions (
             server_id TEXT,
             user_id TEXT,
-            command_name TEXT,
-            PRIMARY KEY (server_id, user_id, command_name)
+            permission_name TEXT,
+            PRIMARY KEY (server_id, user_id, permission_name)
         )
     `, (err, res) => {
         if (err) {
@@ -24,9 +24,9 @@ function setupDatabase(serverId) {
 
     if (serverId) {
         client.query(`
-            INSERT INTO whitelisted_permissions (server_id, user_id, command_name)
+            INSERT INTO permissions (server_id, user_id, permission_name)
             VALUES ($1, '', '')
-            ON CONFLICT (server_id, user_id, command_name) DO NOTHING
+            ON CONFLICT (server_id, user_id, permission_name) DO NOTHING
         `, [serverId], (err, res) => {
             if (err) {
                 console.error(err);
