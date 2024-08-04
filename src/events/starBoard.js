@@ -1,25 +1,11 @@
-const { Events, EmbedBuilder, PermissionsBitField } = require('discord.js');
-const { pinChannel, pinServer, databasePath } = require('@config');
+const { PermissionsBitField, EmbedBuilder, Events } = require('discord.js');
 const { Client } = require('pg');
-
 const client = new Client({
-    connectionString: `${databasePath}`,
+    connectionString: process.env.DATABASE_URL,
 });
-
 client.connect();
 
 async function fetchReactionMessage(reaction) {
-    // When a reaction is received, check if the structure is partial
-    if (reaction.partial) {
-        try {
-            await reaction.fetch();
-        } catch (error) {
-            console.error('Something went wrong when fetching the message:', error);
-            return null;
-        }
-    }
-
-    // Return the message information
     const message = reaction.message;
     return {
         authorTag: message.author.tag,
@@ -31,13 +17,16 @@ async function fetchReactionMessage(reaction) {
     };
 }
 
-async function hasStarBoardPermission(serverId, userId) {
+async function hasStarBoardPermission(serverId, userId, member) {
     const res = await client.query(`
         SELECT 1 FROM whitelisted_permissions
         WHERE server_id = $1 AND user_id = $2 AND command_name = 'starboard'
     `, [serverId, userId]);
 
-    return res.rowCount > 0;
+    const hasCustomPermission = res.rowCount > 0;
+    const hasPinPermission = member.permissions.has(PermissionsBitField.Flags.ManageMessages);
+
+    return hasCustomPermission || hasPinPermission;
 }
 
 module.exports = {
@@ -56,10 +45,13 @@ module.exports = {
             return;
         }
 
-        // Check if the user has the custom "star_board" permission
-        const hasPermission = await hasStarBoardPermission(reaction.message.guild.id, user.id);
+        // Fetch the member object for the user
+        const member = await reaction.message.guild.members.fetch(user.id);
+
+        // Check if the user has the custom "star_board" permission or the permission to pin messages
+        const hasPermission = await hasStarBoardPermission(reaction.message.guild.id, user.id, member);
         if (!hasPermission) {
-            console.error('User does not have the "Star Board" permission');
+            console.error('User does not have the "Star Board" permission or the permission to pin messages');
             return;
         }
 
