@@ -1,0 +1,8 @@
+{
+    "permissions": [
+        {
+            "name": "starboard",
+            "description": "Allows a user to add to the starboard."
+        }
+    ]
+}
