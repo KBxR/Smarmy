@@ -1,5 +1,6 @@
 const { PermissionsBitField, EmbedBuilder, Events } = require('discord.js');
 const { Client } = require('pg');
+const { pinChannel, pinServer } = require('@config');
 const client = new Client({
     connectionString: process.env.DATABASE_URL,
 });
