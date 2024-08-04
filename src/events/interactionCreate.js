@@ -1,6 +1,7 @@
 const { Events } = require('discord.js');
 
 module.exports = {
+    eventName: 'Interaction Create',
     name: Events.InteractionCreate,
     async execute(interaction) {
         // Check for chat input command
