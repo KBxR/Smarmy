@@ -13,7 +13,7 @@ module.exports.data = new SlashCommandSubcommandBuilder()
     .setName('list')
     .setDescription('List all available permissions');
 
-module.exports.execute = async function handlePermissionAdd(interaction) {
+module.exports.execute = async function handlePermissionList(interaction) {
     const embed = new EmbedBuilder()
         .setColor(0x0099ff)
         .setTitle('Available Permissions')
