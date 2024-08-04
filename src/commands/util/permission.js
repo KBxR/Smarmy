@@ -4,15 +4,10 @@ const { databasePath } = require('@config');
 const permissionsData = require('./permissions.json');
 
 const client = new Client({
-    connectionString: databasePath,
+    connectionString: `${databasePath}`,
 });
 
 client.connect();
-
-const permissionChoices = permissionsData.permissions.map(permission => ({
-    name: permission.name,
-    value: permission.name
-}));
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -30,7 +25,9 @@ module.exports = {
                     option.setName('permission')
                         .setDescription('The permission to grant')
                         .setRequired(true)
-                        .addChoices(...permissionChoices)))
+                        .addChoices(
+                            { name: 'Starboard', value: 'starboard' },
+                        )))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('remove')
@@ -43,7 +40,9 @@ module.exports = {
                     option.setName('permission')
                         .setDescription('The permission to revoke')
                         .setRequired(true)
-                        .addChoices(...permissionChoices)))
+                        .addChoices(
+                            { name: 'Starboard', value: 'starboard' },
+                        )))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('list')
@@ -63,24 +62,24 @@ module.exports = {
             client.query(`
                 INSERT INTO permissions (server_id, user_id, permission_name)
                 VALUES ($1, $2, $3)
-            `, [serverId, user.id, permission], (err, res) => {
+            `, [serverId, user.id, permission], async (err, res) => {
                 if (err) {
                     console.error(err);
-                    interaction.reply({ content: 'Failed to add permission.', ephemeral: true });
+                    await interaction.reply({ content: 'Failed to add permission.', ephemeral: true });
                 } else {
-                    interaction.reply({ content: `Permission ${permission} added to ${user.tag}.`, ephemeral: true });
+                    await interaction.reply({ content: `Permission \`${permission}\` added to ${user.tag}.`, ephemeral: true });
                 }
             });
         } else if (subcommand === 'remove') {
             client.query(`
                 DELETE FROM permissions
                 WHERE server_id = $1 AND user_id = $2 AND permission_name = $3
-            `, [serverId, user.id, permission], (err, res) => {
+            `, [serverId, user.id, permission], async (err, res) => {
                 if (err) {
                     console.error(err);
-                    interaction.reply({ content: 'Failed to remove permission.', ephemeral: true });
+                    await interaction.reply({ content: 'Failed to remove permission.', ephemeral: true });
                 } else {
-                    interaction.reply({ content: `Permission ${permission} removed from ${user.tag}.`, ephemeral: true });
+                    await interaction.reply({ content: `Permission \`${permission}\` removed from ${user.tag}.`, ephemeral: true });
                 }
             });
         } else if (subcommand === 'list') {
