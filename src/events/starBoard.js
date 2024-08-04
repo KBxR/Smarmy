@@ -1,5 +1,12 @@
 const { Events, EmbedBuilder, PermissionsBitField } = require('discord.js');
-const { pinChannel, pinServer } = require('@config');
+const { pinChannel, pinServer, databasePath } = require('@config');
+const { Client } = require('pg');
+
+const client = new Client({
+    connectionString: `${databasePath}`,
+});
+
+client.connect();
 
 async function fetchReactionMessage(reaction) {
     // When a reaction is received, check if the structure is partial
@@ -24,6 +31,15 @@ async function fetchReactionMessage(reaction) {
     };
 }
 
+async function hasStarBoardPermission(serverId, userId) {
+    const res = await client.query(`
+        SELECT 1 FROM whitelisted_permissions
+        WHERE server_id = $1 AND user_id = $2 AND command_name = 'starboard'
+    `, [serverId, userId]);
+
+    return res.rowCount > 0;
+}
+
 module.exports = {
     eventName: 'Star Board',
     name: Events.MessageReactionAdd,
@@ -40,17 +56,17 @@ module.exports = {
             return;
         }
 
-        // Check if the user has permission to pin messages
-        const member = await reaction.message.guild.members.fetch(user.id);
-        if (!member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-            console.error('User does not have permission to pin messages');
+        // Check if the user has the custom "star_board" permission
+        const hasPermission = await hasStarBoardPermission(reaction.message.guild.id, user.id);
+        if (!hasPermission) {
+            console.error('User does not have the "Star Board" permission');
             return;
         }
 
         // Create an embed to log the star reaction
         const embed = new EmbedBuilder()
             .setColor('#FFD700')
-            .setAuthor({ name: messageInfo.authorTag, iconURL: messageInfo.authorAvatarURL })
+            .setAuthor({ name: `Sender: ${messageInfo.authorTag}`, iconURL: messageInfo.authorAvatarURL })
             .setFooter({ text: `Starred by ${user.tag}`, iconURL: user.displayAvatarURL() })
             .setTimestamp(reaction.message.createdTimestamp); // Use the original message timestamp
 
@@ -67,6 +83,12 @@ module.exports = {
         const imageAttachment = messageInfo.attachments.find(attachment => attachment.contentType.startsWith('image/'));
         if (imageAttachment) {
             embed.setImage(imageAttachment.url);
+        }
+        
+        // Check for Tenor GIF link in the message content
+        const tenorGifLink = messageInfo.content.match(/https:\/\/tenor\.com\/view\/[^\s]+/);
+        if (tenorGifLink) {
+            embed.setImage(tenorGifLink[0]);
         }
 
         const videoAttachment = messageInfo.attachments.find(attachment => attachment.contentType.startsWith('video/'));
