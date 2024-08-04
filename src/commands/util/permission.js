@@ -1,99 +1,27 @@
-const { SlashCommandBuilder, PermissionsBitField, EmbedBuilder } = require('discord.js');
-const { Client } = require('pg');
-const { databasePath } = require('@config');
-const permissionsData = require('./permissions.json');
+const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
 
-const client = new Client({
-    connectionString: `${databasePath}`,
-});
+const commandFiles = fs.readdirSync(path.join(__dirname, 'permission')).filter(file => file.endsWith('.js'));
 
-client.connect();
+const command = new SlashCommandBuilder()
+    .setName('permission')
+    .setDescription('Permission Options');
+
+for (const file of commandFiles) {
+    const commandData = require(`./permission/${file}`);
+    command.addSubcommand(() => commandData.data);
+}
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('permission')
-        .setDescription('Manage user permissions')
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('add')
-                .setDescription('Add a permission to a user')
-                .addUserOption(option =>
-                    option.setName('user')
-                        .setDescription('The user to grant permission to')
-                        .setRequired(true))
-                .addStringOption(option =>
-                    option.setName('permission')
-                        .setDescription('The permission to grant')
-                        .setRequired(true)
-                        .addChoices(
-                            { name: 'Starboard', value: 'starboard' },
-                        )))
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('remove')
-                .setDescription('Remove a permission from a user')
-                .addUserOption(option =>
-                    option.setName('user')
-                        .setDescription('The user to revoke permission from')
-                        .setRequired(true))
-                .addStringOption(option =>
-                    option.setName('permission')
-                        .setDescription('The permission to revoke')
-                        .setRequired(true)
-                        .addChoices(
-                            { name: 'Starboard', value: 'starboard' },
-                        )))
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('list')
-                .setDescription('List all available permissions')),
+    data: command,
     async execute(interaction) {
-        if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
-            await interaction.reply({ content: 'You do not have permission to manage the server.', ephemeral: true });
-            return;
+        if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
+            return interaction.reply({ content: 'You do not have permission to use this command.', ephemeral: true });
         }
 
         const subcommand = interaction.options.getSubcommand();
-        const user = interaction.options.getUser('user');
-        const permission = interaction.options.getString('permission');
-        const serverId = interaction.guild.id;
-
-        if (subcommand === 'add') {
-            client.query(`
-                INSERT INTO permissions (server_id, user_id, permission_name)
-                VALUES ($1, $2, $3)
-            `, [serverId, user.id, permission], async (err, res) => {
-                if (err) {
-                    console.error(err);
-                    await interaction.reply({ content: 'Failed to add permission.', ephemeral: true });
-                } else {
-                    await interaction.reply({ content: `Permission \`${permission}\` added to ${user.tag}.`, ephemeral: true });
-                }
-            });
-        } else if (subcommand === 'remove') {
-            client.query(`
-                DELETE FROM permissions
-                WHERE server_id = $1 AND user_id = $2 AND permission_name = $3
-            `, [serverId, user.id, permission], async (err, res) => {
-                if (err) {
-                    console.error(err);
-                    await interaction.reply({ content: 'Failed to remove permission.', ephemeral: true });
-                } else {
-                    await interaction.reply({ content: `Permission \`${permission}\` removed from ${user.tag}.`, ephemeral: true });
-                }
-            });
-        } else if (subcommand === 'list') {
-            const embed = new EmbedBuilder()
-                .setColor(0x0099ff)
-                .setTitle('Available Permissions')
-                .setTimestamp()
-                .setFooter({ text: 'Permissions List' });
-
-            permissionsData.permissions.forEach(permission => {
-                embed.addFields({ name: permission.name, value: permission.description });
-            });
-
-            await interaction.reply({ embeds: [embed], ephemeral: true });
-        }
+        const commandFile = require(`./permission/${subcommand}.js`);
+        await commandFile.execute(interaction);
     }
 };
