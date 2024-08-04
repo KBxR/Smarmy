@@ -9,6 +9,11 @@ const client = new Client({
 
 client.connect();
 
+const permissionChoices = permissionsData.permissions.map(permission => ({
+    name: permission.name,
+    value: permission.name
+}));
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('permission')
@@ -24,7 +29,8 @@ module.exports = {
                 .addStringOption(option =>
                     option.setName('permission')
                         .setDescription('The permission to grant')
-                        .setRequired(true)))
+                        .setRequired(true)
+                        .addChoices(...permissionChoices)))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('remove')
@@ -36,7 +42,8 @@ module.exports = {
                 .addStringOption(option =>
                     option.setName('permission')
                         .setDescription('The permission to revoke')
-                        .setRequired(true)))
+                        .setRequired(true)
+                        .addChoices(...permissionChoices)))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('list')
@@ -79,12 +86,14 @@ module.exports = {
         } else if (subcommand === 'list') {
             const embed = new EmbedBuilder()
                 .setColor(0x0099ff)
-                .setTitle('Available Permissions');
-        
+                .setTitle('Available Permissions')
+                .setTimestamp()
+                .setFooter({ text: 'Permissions List' });
+
             permissionsData.permissions.forEach(permission => {
-                embed.addFields({ name: `\`${permission.name}\``, value: permission.description });
+                embed.addFields({ name: permission.name, value: permission.description });
             });
-        
+
             await interaction.reply({ embeds: [embed], ephemeral: true });
         }
     }
