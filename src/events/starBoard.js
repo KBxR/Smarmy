@@ -1,12 +1,25 @@
-const { PermissionsBitField, EmbedBuilder, Events } = require('discord.js');
+const { Events, EmbedBuilder, PermissionsBitField } = require('discord.js');
+const { pinChannel, pinServer, databasePath } = require('@config');
 const { Client } = require('pg');
-const { pinChannel, pinServer } = require('@config');
+
 const client = new Client({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: `${databasePath}`,
 });
+
 client.connect();
 
 async function fetchReactionMessage(reaction) {
+    // When a reaction is received, check if the structure is partial
+    if (reaction.partial) {
+        try {
+            await reaction.fetch();
+        } catch (error) {
+            console.error('Something went wrong when fetching the message:', error);
+            return null;
+        }
+    }
+
+    // Return the message information
     const message = reaction.message;
     return {
         authorTag: message.author.tag,
@@ -49,10 +62,9 @@ module.exports = {
         // Fetch the member object for the user
         const member = await reaction.message.guild.members.fetch(user.id);
 
-        // Check if the user has the custom "star_board" permission or the permission to pin messages
         const hasPermission = await hasStarBoardPermission(reaction.message.guild.id, user.id, member);
         if (!hasPermission) {
-            console.error('User does not have the "Star Board" permission or the permission to pin messages');
+            console.error('User does not have the "Starboard" permission');
             return;
         }
 
