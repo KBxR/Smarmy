@@ -33,7 +33,7 @@ async function fetchReactionMessage(reaction) {
 
 async function hasStarBoardPermission(serverId, userId, member) {
     const res = await client.query(`
-        SELECT 1 FROM whitelisted_permissions
+        SELECT 1 FROM permissions
         WHERE server_id = $1 AND user_id = $2 AND command_name = 'starboard'
     `, [serverId, userId]);
 
