@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { catKey, databasePath, adminId } = require('@config');
+const { fetchCatPicture } = require('@api/catApi');
 const { Client } = require('pg');
 
 const client = new Client({
@@ -51,10 +52,7 @@ module.exports = {
                 }
             }
 
-            const fetch = (await import('node-fetch')).default;
-            const response = await fetch(`https://api.thecatapi.com/v1/images/search?api_key=${catKey}`);
-            const data = await response.json();
-            const pictureUrl = data[0].url;
+            const pictureUrl = await fetchCatPicture(catKey);
 
             await client.query(`
                 INSERT INTO cat_pictures (user_id, picture_url, fetched_at)
