@@ -20,3 +20,4 @@ services:
       - LASTFM_KEY=${LASTFM_KEY}
       - LASTFM_SECRET=${LASTFM_SECRET}
       - REBRICK_KEY=${REBRICK_KEY}
+      - CAT_KEY=${CAT_KEY}

@@ -16,6 +16,7 @@ const config = {
     pinChannel: process.env.PIN_CHANNEL,
     pinServer: process.env.PIN_SERVER,
     databasePath: process.env.DATABASE_URL,
+    catKey: process.env.CAT_KEY,
 };
 
 module.exports = config;
