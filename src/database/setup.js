@@ -7,6 +7,7 @@ const client = new Client({
 client.connect();
 
 function setupDatabase(serverId) {
+    // Create permissions table
     client.query(`
         CREATE TABLE IF NOT EXISTS permissions (
             server_id TEXT,
@@ -18,7 +19,23 @@ function setupDatabase(serverId) {
         if (err) {
             console.error(err);
         } else {
-            console.log('Table is successfully created or already exists');
+            console.log('Permissions table is successfully created or already exists');
+        }
+    });
+
+    // Create cat_pictures table
+    client.query(`
+        CREATE TABLE IF NOT EXISTS cat_pictures (
+            id SERIAL PRIMARY KEY,
+            user_id VARCHAR(255) NOT NULL,
+            picture_url TEXT NOT NULL,
+            fetched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    `, (err, res) => {
+        if (err) {
+            console.error(err);
+        } else {
+            console.log('Cat pictures table is successfully created or already exists');
         }
     });
 
