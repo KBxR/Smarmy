@@ -8,8 +8,7 @@ This Discord bot is a personal project created for experimenting with Discord.js
 - View guild information
 - Update bot's avatar, username, and status via command
 - LastFM API Support
-- SQLite3 database for user info
 
 ## TODO
 
-- Make this Docker deployable
+- Make a better readme
