@@ -2,20 +2,10 @@ const { SlashCommandBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
-// Get the current file name without extension
 const fileName = path.basename(__filename, path.extname(__filename));
 
-// Create a folder with the file name
 const folderPath = path.join(__dirname, fileName);
 
-if (!fs.existsSync(folderPath)) {
-    fs.mkdirSync(folderPath);
-    console.log(`Folder created: ${folderPath}`);
-} else {
-    console.log(`Folder already exists: ${folderPath}`);
-}
-
-// Read command files from the dynamically created folder
 const commandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith('.js'));
 
 const command = new SlashCommandBuilder()
