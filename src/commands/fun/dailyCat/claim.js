@@ -3,7 +3,6 @@ const { catKey, databasePath, adminId } = require('@config');
 const { randomColor } = require('@utils');
 const { fetchCatPicture } = require('@api/catApi');
 const { Client } = require('pg');
-const { randomColor } = require('../../../utils');
 
 const client = new Client({
     connectionString: `${databasePath}`,
