@@ -52,7 +52,7 @@ module.exports = {
             .setColor(randomColor)
             .setTitle('Here is your daily cat picture! 🐱')
             .setImage(pictureUrl)
-            .setFooter({ text: `Cat ID: ${userCatId} | You can get a new cat picture in 24 hours.`})
+            .setFooter({ text: `Cat ID: ${CatId} | You can get a new cat picture in 24 hours.`})
             .setTimestamp();
 
         await interaction.reply({ embeds: [embed], ephemeral: false });
