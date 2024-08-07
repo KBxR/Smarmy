@@ -1,8 +1,9 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const { catKey, databasePath, adminId } = require('@config');
-const { getRandomHexColor } = require('@utils');
+const { randomColor } = require('@utils');
 const { fetchCatPicture } = require('@api/catApi');
 const { Client } = require('pg');
+const { randomColor } = require('../../../utils');
 
 const client = new Client({
     connectionString: `${databasePath}`,
@@ -49,7 +50,7 @@ module.exports = {
         const catId = insertRes.rows[0].id;
 
         const embed = new EmbedBuilder()
-            .setColor(`${getRandomHexColor}`)
+            .setColor(`${randomColor}`)
             .setTitle('Here is your daily cat picture! 🐱')
             .setImage(pictureUrl)
             .setFooter(`Cat ID: ${catId} | You can get a new cat picture in 24 hours.`)
