@@ -12,3 +12,4 @@ This Discord bot is a personal project created for experimenting with Discord.js
 ## TODO
 
 - Make a better readme
+
