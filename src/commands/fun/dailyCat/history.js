@@ -17,6 +17,9 @@ module.exports = {
                 .setDescription('The member whose history you want to view')
                 .setRequired(false)),
     async execute(interaction) {
+
+        const userId = interaction.options.getUser('member')?.id || interaction.user.id;
+
         const res = await client.query(`
             SELECT picture_url, fetched_at
             FROM cat_pictures
