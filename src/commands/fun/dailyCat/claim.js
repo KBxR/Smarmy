@@ -14,6 +14,8 @@ module.exports = {
         .setName('claim')
         .setDescription('Fetch today\'s cat picture'),
     async execute(interaction) {
+        const userId = interaction.options.getUser('member')?.id || interaction.user.id;
+        
         if (userId !== adminId) {
             const lastCatRes = await client.query(`
                 SELECT fetched_at
