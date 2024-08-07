@@ -49,7 +49,7 @@ module.exports = {
         const catId = insertRes.rows[0].id;
 
         const embed = new EmbedBuilder()
-            .setColor(`${randomColor}`)
+            .setColor(randomColor)
             .setTitle('Here is your daily cat picture! 🐱')
             .setImage(pictureUrl)
             .setFooter(`Cat ID: ${catId} | You can get a new cat picture in 24 hours.`)
