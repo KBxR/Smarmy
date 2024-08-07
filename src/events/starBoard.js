@@ -50,6 +50,11 @@ module.exports = {
         // Check if the reaction is a star
         if (reaction.emoji.name !== '⭐') return;
 
+        // Check if the message already has a star reaction
+        const message = reaction.message;
+        const starReaction = message.reactions.cache.find(r => r.emoji.name === '⭐' && r.count > 1);
+        if (starReaction) return;
+
         // Get the message information from the reaction
         const messageInfo = await fetchReactionMessage(reaction);
         if (!messageInfo) return;
