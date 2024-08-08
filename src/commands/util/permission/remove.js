@@ -15,6 +15,7 @@ module.exports.data = new SlashCommandSubcommandBuilder()
             .addChoices(
                 { name: 'Starboard', value: 'starboard' },
                 { name: 'Roles', value: 'roles' },
+                { name: 'Superuser', value: 'superuser' },
             ));
 
 module.exports.execute = async function handlePermissionRemove(interaction) {

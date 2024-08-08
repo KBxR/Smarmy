@@ -20,9 +20,17 @@ module.exports.execute = async function handlePermissionList(interaction) {
         .setTimestamp()
         .setFooter({ text: 'Permissions List' });
 
-    permissionsData.permissions.forEach(permission => {
-        embed.addFields({ name: permission.name, value: permission.description });
-    });
+    // Iterate over each category in the permissions data
+    for (const category in permissionsData) {
+        if (permissionsData.hasOwnProperty(category)) {
+            const categoryDescription = permissionsData[category][0];
+            embed.addFields({ name: category.charAt(0).toUpperCase() + category.slice(1), value: categoryDescription, inline: false });
+
+            permissionsData[category].slice(1).forEach(permission => {
+                embed.addFields({ name: permission.name, value: permission.description, inline: true });
+            });
+        }
+    }
 
     await interaction.reply({ embeds: [embed], ephemeral: true });
 };

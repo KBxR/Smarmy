@@ -8,6 +8,17 @@ const client = new Client({
 client.connect();
 
 async function hasPermission(serverId, userId, permissionName) {
+    // Check if the user has the superuser permission
+    const superUserRes = await client.query(`
+        SELECT 1 FROM permissions
+        WHERE server_id = $1 AND user_id = $2 AND permission_name = 'superuser'
+    `, [serverId, userId]);
+
+    if (superUserRes.rowCount > 0) {
+        return true;
+    }
+
+    // Check if the user has the specific permission
     const res = await client.query(`
         SELECT 1 FROM permissions
         WHERE server_id = $1 AND user_id = $2 AND permission_name = $3
