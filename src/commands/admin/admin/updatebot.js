@@ -97,6 +97,10 @@ async function updateStatus(newValue, statusType, client, interaction, activityT
         .addStringOption(option =>
             option.setName('status_type')
                 .setDescription('The type of status (Playing, Watching, Streaming, Listening)')
+        )
+        .addAttachmentOption(option =>
+            option.setName('image')
+                .setDescription('The image to use for the avatar')
         );
         
 module.exports.execute = async function handleUpdateBot(interaction) {
