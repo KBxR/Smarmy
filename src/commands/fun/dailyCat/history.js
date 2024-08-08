@@ -41,36 +41,38 @@ module.exports = {
                     .setImage(picture.picture_url)
                     .setFooter({ text: `Cat ID: ${picture.id}` });
             };
-
-            const row = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId('prev')
-                        .setLabel('Previous')
-                        .setStyle(ButtonStyle.Primary)
-                        .setDisabled(currentIndex === 0),
-                    new ButtonBuilder()
-                        .setCustomId('next')
-                        .setLabel('Next')
-                        .setStyle(ButtonStyle.Primary)
-                        .setDisabled(currentIndex === pictures.length - 1)
-                );
-
-            const message = await interaction.reply({ embeds: [generateEmbed(currentIndex)], components: [row], ephemeral: false });
-
+            
+            const createActionRow = (currentIndex) => {
+                return new ActionRowBuilder()
+                    .addComponents(
+                        new ButtonBuilder()
+                            .setCustomId('prev')
+                            .setLabel('Previous')
+                            .setStyle(ButtonStyle.Primary)
+                            .setDisabled(currentIndex === 0),
+                        new ButtonBuilder()
+                            .setCustomId('next')
+                            .setLabel('Next')
+                            .setStyle(ButtonStyle.Primary)
+                            .setDisabled(currentIndex === pictures.length - 1)
+                    );
+            };
+            
+            const message = await interaction.reply({ embeds: [generateEmbed(currentIndex)], components: [createActionRow(currentIndex)], ephemeral: false });
+            
             const filter = i => i.customId === 'prev' || i.customId === 'next';
             const collector = message.createMessageComponentCollector({ filter, time: 60000 });
-
+            
             collector.on('collect', async i => {
                 if (i.customId === 'prev') {
                     currentIndex--;
                 } else if (i.customId === 'next') {
                     currentIndex++;
                 }
-
-                await i.update({ embeds: [generateEmbed(currentIndex)], components: [row] });
+            
+                await i.update({ embeds: [generateEmbed(currentIndex)], components: [createActionRow(currentIndex)] });
             });
-
+            
             collector.on('end', collected => {
                 if (collected.size === 0) {
                     message.edit({ components: [] });
