@@ -1,12 +1,6 @@
 const { Events, EmbedBuilder, PermissionsBitField } = require('discord.js');
-const { pinChannel, pinServer, databasePath } = require('@config');
-const { Client } = require('pg');
-
-const client = new Client({
-    connectionString: `${databasePath}`,
-});
-
-client.connect();
+const { pinChannel, pinServer } = require('@config');
+const { hasPermission } = require('@utils/permissions');
 
 async function fetchReactionMessage(reaction) {
     // When a reaction is received, check if the structure is partial
@@ -32,12 +26,7 @@ async function fetchReactionMessage(reaction) {
 }
 
 async function hasStarBoardPermission(serverId, userId, member) {
-    const res = await client.query(`
-        SELECT 1 FROM permissions
-        WHERE server_id = $1 AND user_id = $2 AND permission_name = 'starboard'
-    `, [serverId, userId]);
-
-    const hasCustomPermission = res.rowCount > 0;
+    const hasCustomPermission = await hasPermission(serverId, userId, 'starboard');
     const hasPinPermission = member.permissions.has(PermissionsBitField.Flags.ManageMessages);
 
     return hasCustomPermission || hasPinPermission;

@@ -1,12 +1,5 @@
 const { SlashCommandSubcommandBuilder } = require('discord.js');
-const { Client } = require('pg');
-const { databasePath } = require('@config');
-
-const client = new Client({
-    connectionString: `${databasePath}`,
-});
-
-client.connect();
+const { addPermission } = require('@utils/permissions');
 
 module.exports.data = new SlashCommandSubcommandBuilder()
     .setName('add')
@@ -21,6 +14,7 @@ module.exports.data = new SlashCommandSubcommandBuilder()
             .setRequired(true)
             .addChoices(
                 { name: 'Starboard', value: 'starboard' },
+                { name: 'Roles', value: 'roles' },
             ));
 
 module.exports.execute = async function handlePermissionAdd(interaction) {
@@ -28,15 +22,11 @@ module.exports.execute = async function handlePermissionAdd(interaction) {
     const permission = interaction.options.getString('permission');
     const serverId = interaction.guild.id;
 
-    client.query(`
-        INSERT INTO permissions (server_id, user_id, permission_name)
-        VALUES ($1, $2, $3)
-    `, [serverId, user.id, permission], async (err, res) => {
-        if (err) {
-            console.error(err);
-            await interaction.reply({ content: 'Failed to add permission.', ephemeral: true });
-        } else {
-            await interaction.reply({ content: `Permission \`${permission}\` added to ${user.tag}.`, ephemeral: true });
-        }
-    });
+    try {
+        await addPermission(serverId, user.id, permission);
+        await interaction.reply({ content: `Permission \`${permission}\` added to ${user.tag}.`, ephemeral: true });
+    } catch (err) {
+        console.error(err);
+        await interaction.reply({ content: 'Failed to add permission.', ephemeral: true });
+    }
 };
