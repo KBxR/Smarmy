@@ -7,5 +7,8 @@ let randomColor = getRandomHexColor();
 module.exports = {
     DBHandler,
     getBotInfo,
-    randomColor
+    // Gets a random color on startup and uses it for the bot's embeds
+    randomColor,
+    // Use if you want a random color for each embed
+    getRandomHexColor
 };
