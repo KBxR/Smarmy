@@ -1,6 +1,6 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const { catKey, databasePath, adminId } = require('@config');
-const { randomColor } = require('@utils');
+const { getRandomHexColor } = require('@utils');
 const { fetchCatPicture } = require('@api/catApi');
 const { Client } = require('pg');
 
@@ -47,6 +47,8 @@ module.exports = {
         `, [userId, pictureUrl]);
 
         const catId = insertRes.rows[0].id;
+
+        const randomColor = getRandomHexColor();
 
         const embed = new EmbedBuilder()
             .setColor(randomColor)
