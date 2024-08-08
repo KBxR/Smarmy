@@ -51,8 +51,9 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor(randomColor)
             .setTitle('Here is your daily cat picture! 🐱')
+            .setDescription('You can get a new cat picture in 24 hours.')
             .setImage(pictureUrl)
-            .setFooter({ text: `Cat ID: ${catId} | You can get a new cat picture in 24 hours.`})
+            .setFooter({ text: `Cat ID: ${catId}`})
             .setTimestamp();
 
         await interaction.reply({ embeds: [embed], ephemeral: false });
