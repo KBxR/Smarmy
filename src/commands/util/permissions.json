@@ -3,6 +3,10 @@
         {
             "name": "starboard",
             "description": "Allows a user to add to the starboard."
+        },
+        {
+            "name": "roles",
+            "description": "Allows a user to create, and manage role icons (more will be added)."
         }
     ]
 }
