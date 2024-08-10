@@ -51,6 +51,12 @@ module.exports.execute = async function handleRecent(interaction) {
             .setThumbnail(`${res.image[3]['#text']}`)
             .setFooter({ text: `Total Scrobbles: ${resUser.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
 
+        // Add timestamp if available
+        if (res.date && res.date.uts) {
+            const streamDate = new Date(res.date.uts * 1000);
+            recentEmbed.setTimestamp(streamDate);
+        }
+
         interaction.reply({ embeds: [recentEmbed], ephemeral: false });
     } catch (error) {
         console.error('Error:', error);
