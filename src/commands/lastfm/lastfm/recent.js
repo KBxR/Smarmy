@@ -19,7 +19,7 @@ module.exports.execute = async function handleRecent(interaction) {
     let userID = interaction.user.id;
     
     // Acknowledge the interaction early
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: false });
     
     const result = await resolveUsername({ username, mention, userID, interaction, DBHandler });
     if (result.error) {
