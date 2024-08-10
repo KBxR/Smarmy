@@ -17,6 +17,7 @@ const config = {
     pinServer: process.env.PIN_SERVER,
     databasePath: process.env.DATABASE_URL,
     catKey: process.env.CAT_KEY,
+    nasaKey: process.env.NASA_KEY,
 };
 
 module.exports = config;
