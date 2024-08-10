@@ -21,3 +21,4 @@ services:
       - LASTFM_SECRET=${LASTFM_SECRET}
       - REBRICK_KEY=${REBRICK_KEY}
       - CAT_KEY=${CAT_KEY}
+      - NASA_KEY=${NASA_KEY}

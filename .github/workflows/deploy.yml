@@ -66,6 +66,7 @@ jobs:
           export LASTFM_SECRET=${{ secrets.LASTFM_SECRET }}
           export REBRICK_KEY=${{ secrets.REBRICK_KEY }}
           export CAT_KEY=${{ secrets.CAT_KEY }}
+          export NASA_KEY=${{ secrets.NASA_KEY }}
           docker-compose -f /root/docker-compose.yml up -d
           exit
           EOF
