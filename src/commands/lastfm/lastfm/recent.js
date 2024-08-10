@@ -17,27 +17,30 @@ module.exports.execute = async function handleRecent(interaction) {
     let username = interaction.options.getString('username');
     let mention = interaction.options.getUser('member');
     let userID = interaction.user.id;
-
+    
+    // Acknowledge the interaction early
+    await interaction.deferReply({ ephemeral: true });
+    
     const result = await resolveUsername({ username, mention, userID, interaction, DBHandler });
     if (result.error) {
-        return interaction.reply({ content: result.error, ephemeral: true });
+        return interaction.editReply({ content: result.error });
     }
     username = result.username;
-
+    
     try {
         // Check if the Last.fm user exists
         const resUser = await getLastFmUser(username);
         if (!resUser) {
-            return interaction.reply({ content: 'The Last.fm username does not exist.', ephemeral: true });
+            return interaction.editReply({ content: 'The Last.fm username does not exist.' });
         }
-
+    
         const resTrack = await getRecentTracks(username);
         
         const res = resTrack[0];
-
+    
         const isCurrentlyPlaying = res['@attr'] && res['@attr'].nowplaying === 'true';
         const title = isCurrentlyPlaying ? `${username}'s Currently Playing Track` : `${username}'s Recently Played Track`;
-
+    
         const artistSplit = res.url.split('_');
         const recentEmbed = new EmbedBuilder()
             .setColor('#e4141e')
@@ -50,14 +53,8 @@ module.exports.execute = async function handleRecent(interaction) {
             )
             .setThumbnail(`${res.image[3]['#text']}`)
             .setFooter({ text: `Total Scrobbles: ${resUser.playcount}`, iconURL: 'https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png' });
-
-        // Add timestamp if available
-        if (res.date && res.date.uts) {
-            const streamDate = new Date(res.date.uts * 1000);
-            recentEmbed.setTimestamp(streamDate);
-        }
-
-        interaction.reply({ embeds: [recentEmbed], ephemeral: false });
+    
+        await interaction.editReply({ embeds: [recentEmbed] });
     } catch (error) {
         console.error('Error:', error);
         const detailedErrorUserId = '327885496036622347';
@@ -65,6 +62,6 @@ module.exports.execute = async function handleRecent(interaction) {
             ? `An error occurred: ${error.response.data.message}`
             : 'An error occurred, please try again later.';
         
-        interaction.reply({ content: errorMessage, ephemeral: true });
+        await interaction.editReply({ content: errorMessage });
     }
 };
