@@ -2,8 +2,7 @@ require('module-alias/register');
 const fs = require('node:fs');
 const path = require('node:path');
 const config = require('@config');
-const { setupDatabase } = require('@database/setup');
-const { Client, Collection, GatewayIntentBits, Partials, Events } = require('discord.js');
+const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -50,7 +49,5 @@ for (const file of eventFiles) {
         client.on(event.name, (...args) => event.execute(...args));
     }
 }
-
-setupDatabase();
 
 client.login(config.token);

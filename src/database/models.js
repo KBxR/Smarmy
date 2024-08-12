@@ -28,7 +28,30 @@ const BotInfo = sequelize.define('BotInfo', {
     timestamps: false,
 });
 
+const CatPicture = sequelize.define('CatPicture', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
+    user_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    picture_url: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+    fetched_at: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.NOW,
+    },
+}, {
+    tableName: 'cat_pictures',
+    timestamps: false,
+});
+
 // Sync all defined models with the database
 sequelize.sync();
 
-module.exports = { User, BotInfo, sequelize };
+module.exports = { User, BotInfo, CatPicture, sequelize };

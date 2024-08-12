@@ -1,57 +1,73 @@
-const { Client } = require('pg');
+const fs = require('fs');
+const path = require('path');
+const { Sequelize, DataTypes } = require('sequelize');
 
-const client = new Client({
-    connectionString: process.env.DATABASE_URL,
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
+    logging: false,
 });
 
-client.connect();
+const Permission = sequelize.define('Permission', {
+    server_id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    user_id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    permission_name: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+}, {
+    tableName: 'permissions',
+    timestamps: false,
+    primaryKey: ['server_id', 'user_id', 'permission_name'],
+});
 
-function setupDatabase(serverId) {
-    // Create permissions table
-    client.query(`
-        CREATE TABLE IF NOT EXISTS permissions (
-            server_id TEXT,
-            user_id TEXT,
-            permission_name TEXT,
-            PRIMARY KEY (server_id, user_id, permission_name)
-        )
-    `, (err, res) => {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log('Permissions table is successfully created or already exists');
-        }
-    });
+const ServerConfig = sequelize.define('ServerConfig', {
+    server_id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    config: {
+        type: DataTypes.JSONB,
+        allowNull: false,
+    },
+}, {
+    tableName: 'server_config',
+    timestamps: false,
+});
 
-    // Create cat_pictures table
-    client.query(`
-        CREATE TABLE IF NOT EXISTS cat_pictures (
-            id SERIAL PRIMARY KEY,
-            user_id VARCHAR(255) NOT NULL,
-            picture_url TEXT NOT NULL,
-            fetched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    `, (err, res) => {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log('Cat pictures table is successfully created or already exists');
-        }
-    });
+async function setupDatabase(serverId) {
+    try {
+        await sequelize.authenticate();
+        console.log('Connection has been established successfully.');
 
-    if (serverId) {
-        client.query(`
-            INSERT INTO permissions (server_id, user_id, permission_name)
-            VALUES ($1, '', '')
-            ON CONFLICT (server_id, user_id, permission_name) DO NOTHING
-        `, [serverId], (err, res) => {
-            if (err) {
-                console.error(err);
+        await Permission.sync();
+        console.log('Permissions table is successfully created or already exists');
+
+        await ServerConfig.sync();
+        console.log('Server config table is successfully created or already exists');
+
+        if (serverId) {
+            let config = await ServerConfig.findOne({ where: { server_id: serverId } });
+            if (!config) {
+                const configTemplatePath = path.join(__dirname, 'config.json');
+                const configTemplate = JSON.parse(fs.readFileSync(configTemplatePath, 'utf8'));
+
+                config = await ServerConfig.create({ server_id: serverId, config: configTemplate });
+                console.log(`Config for server ID ${serverId} has been created using the template.`);
             } else {
-                console.log(`Server ID ${serverId} is logged`);
+                console.log(`Config for server ID ${serverId} already exists.`);
             }
-        });
+        }
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
     }
 }
 
-module.exports = { setupDatabase };
+setupDatabase();
+
+module.exports = { Permission, ServerConfig, setupDatabase };

@@ -1,0 +1,13 @@
+{
+    "starboard": {
+        "channelToSend": "starboard",
+        "channelToListen": "general",
+        "emoji": "⭐",
+        "threshold": 5,
+        "adminOnly": false,
+        "enabled": true
+    },
+    "superuser": {
+        "enabled": true
+    }
+}

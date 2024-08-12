@@ -1,0 +1,24 @@
+{
+    "listeners": [
+        "Message listeners that can be toggled on and off.",
+        {
+            "name": "starboard",
+            "description": "Looks for messages with a certain emoji and sends them to a specified channel.",
+            "channelToSend": "starboard",
+            "channelToListen": "general",
+            "emoji": "⭐",
+            "threshold": 5,
+            "adminOnly": false,
+            "enabled": true
+        }
+    ],
+            
+    "moderation": [
+        "Moderation configeration",
+        {
+            "name": "superuser",
+            "description": "Users with this role can use all moderation commands.",
+            "enabled": true
+        }
+    ]
+}

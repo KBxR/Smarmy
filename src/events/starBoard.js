@@ -1,9 +1,8 @@
 const { Events, EmbedBuilder, PermissionsBitField } = require('discord.js');
-const { pinChannel, pinServer } = require('@config');
 const { hasPermission } = require('@utils/permissions');
+const getServerConfig = require('@utils/getServerConfig');
 
 async function fetchReactionMessage(reaction) {
-    // When a reaction is received, check if the structure is partial
     if (reaction.partial) {
         try {
             await reaction.fetch();
@@ -13,7 +12,6 @@ async function fetchReactionMessage(reaction) {
         }
     }
 
-    // Return the message information
     const message = reaction.message;
     return {
         authorTag: message.author.tag,
@@ -36,55 +34,58 @@ module.exports = {
     eventName: 'Star Board',
     name: Events.MessageReactionAdd,
     async execute(reaction, user) {
-        // Check if the reaction is a star
-        if (reaction.emoji.name !== '⭐') return;
+        const serverId = reaction.message.guild.id;
 
-        // Check if the message already has a star reaction
+        // Fetch the latest server configuration
+        const serverConfig = await getServerConfig(serverId);
+        const starboardConfig = serverConfig.starboard;
+
+        const emoji = starboardConfig.emoji;
+        const pinChannelId = starboardConfig.channelToSend;
+
+        if (reaction.emoji.name !== emoji) {
+            console.log('Reaction emoji does not match configured emoji.');
+            return;
+        }
+
         const message = reaction.message;
-        const starReaction = message.reactions.cache.find(r => r.emoji.name === '⭐' && r.count > 1);
-        if (starReaction) return;
+        const starReaction = message.reactions.cache.find(r => r.emoji.name === emoji && r.count > 1);
+        if (starReaction) {
+            console.log('Message already has a star reaction.');
+            return;
+        }
 
-        // Get the message information from the reaction
         const messageInfo = await fetchReactionMessage(reaction);
-        if (!messageInfo) return;
-
-        // Check if the reaction is in the allowed server
-        if (reaction.message.guild.id !== pinServer) {
+        if (!messageInfo) {
+            console.log('Failed to fetch reaction message.');
             return;
         }
 
-        // Fetch the member object for the user
         const member = await reaction.message.guild.members.fetch(user.id);
-
-        const hasPermission = await hasStarBoardPermission(reaction.message.guild.id, user.id, member);
-        if (!hasPermission) {
-            console.error('User does not have the "Starboard" permission');
+        if (!await hasStarBoardPermission(serverId, user.id, member)) {
+            console.log('User does not have starboard permission.');
             return;
         }
 
-        // Create an embed to log the star reaction
         const embed = new EmbedBuilder()
             .setColor('#FFD700')
             .setAuthor({ name: `Sender: ${messageInfo.authorTag}`, iconURL: messageInfo.authorAvatarURL })
             .setFooter({ text: `Starred by ${user.tag}`, iconURL: user.displayAvatarURL() })
-            .setTimestamp(reaction.message.createdTimestamp); // Use the original message timestamp
+            .setTimestamp(reaction.message.createdTimestamp);
 
         // Add the message content to the embed
         if (messageInfo.content) {
             embed.setDescription(messageInfo.content);
         }
 
-        // Add a link to the original message
         const messageLink = `https://discord.com/channels/${reaction.message.guild.id}/${reaction.message.channel.id}/${reaction.message.id}`;
         embed.addFields({ name: 'Original Message', value: `[Jump to Message](${messageLink})` });
 
-        // Check for image attachments and add the first one to the embed
         const imageAttachment = messageInfo.attachments.find(attachment => attachment.contentType.startsWith('image/'));
         if (imageAttachment) {
             embed.setImage(imageAttachment.url);
         }
-        
-        // Check for Tenor GIF link in the message content
+
         const tenorGifLink = messageInfo.content.match(/https:\/\/tenor\.com\/view\/[^\s]+/);
         if (tenorGifLink) {
             embed.setImage(tenorGifLink[0]);
@@ -94,24 +95,24 @@ module.exports = {
         const audioAttachment = messageInfo.attachments.find(attachment => attachment.contentType.startsWith('audio/'));
         const voiceNoteAttachment = messageInfo.attachments.find(attachment => attachment.contentType.startsWith('voice/'));
 
-        // Find the channel where you want to log the star reactions
-        const targetChannelId = pinChannel; // Replace with your actual log channel ID
-        const targetChannel = await reaction.message.client.channels.fetch(targetChannelId);
+        const pinChannel = reaction.message.guild.channels.cache.get(pinChannelId);
+        if (!pinChannel) {
+            console.log('Pin channel not found.');
+            return;
+        }
 
-        if (targetChannel) {
-            //check for attachments and add send the links in the message, if any, else send the embed
+        try {
             if (videoAttachment) {
-                targetChannel.send({ files: [videoAttachment.url], embeds: [embed] });
+                await pinChannel.send({ files: [videoAttachment.url], embeds: [embed] });
             } else if (audioAttachment) {
-                targetChannel.send({ files: [audioAttachment.url], embeds: [embed] });
+                await pinChannel.send({ files: [audioAttachment.url], embeds: [embed] });
             } else if (voiceNoteAttachment) {
-                targetChannel.send({ files: [voiceNoteAttachment.url], embeds: [embed] });
+                await pinChannel.send({ files: [voiceNoteAttachment.url], embeds: [embed] });
             } else {
-                targetChannel.send({ embeds: [embed] });
+                await pinChannel.send({ embeds: [embed] });
             }
-
-        } else {
-            console.error('Log channel not found');
+        } catch (error) {
+            console.error('Failed to send message to pin channel:', error);
         }
     }
 };
