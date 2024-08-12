@@ -1,5 +1,6 @@
 const { Client } = require('pg');
 const { databasePath } = require('@config');
+const getServerConfig = require('@utils/getServerConfig');
 
 const client = new Client({
     connectionString: `${databasePath}`,
@@ -8,14 +9,23 @@ const client = new Client({
 client.connect();
 
 async function hasPermission(serverId, userId, permissionName) {
-    // Check if the user has the superuser permission
-    const superUserRes = await client.query(`
-        SELECT 1 FROM permissions
-        WHERE server_id = $1 AND user_id = $2 AND permission_name = 'superuser'
-    `, [serverId, userId]);
+    // Fetch the latest server configuration
+    const serverConfig = await getServerConfig(serverId);
+    const superuserConfig = serverConfig.superuser;
 
-    if (superUserRes.rowCount > 0) {
-        return true;
+    // Check if superuser is enabled
+    if (superuserConfig.enabled) {
+        // Check if the user has the superuser permission
+        const superUserRes = await client.query(`
+            SELECT 1 FROM permissions
+            WHERE server_id = $1 AND user_id = $2 AND permission_name = 'superuser'
+        `, [serverId, userId]);
+
+        if (superUserRes.rowCount > 0) {
+            return true;
+        }
+    } else {
+        console.log('Superuser feature is not enabled.');
     }
 
     // Check if the user has the specific permission

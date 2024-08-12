@@ -32,10 +32,10 @@ module.exports.execute = async function handleEditConfig(interaction) {
     const field = interaction.options.getString('field');
     const value = interaction.options.getString('value');
     const channel = interaction.options.getChannel('channel');
-    
+
     try {
         const serverConfig = await ServerConfig.findOne({ where: { server_id: serverId } });
-    
+
         if (!serverConfig) {
             await interaction.reply(`No configuration found for server ID ${serverId}.`);
             return;
@@ -49,7 +49,39 @@ module.exports.execute = async function handleEditConfig(interaction) {
         if (channel) {
             updateData[`config.${path}.${lastKey}`] = channel.id;
         } else if (value) {
-            updateData[`config.${path}.${lastKey}`] = value;
+            // Log value
+            console.log('Value:', value);
+
+            if (field === 'starboard.threshold') {
+                const threshold = parseInt(value, 10);
+                if (isNaN(threshold) || threshold <= 1) {
+                    await interaction.reply('The threshold must be a number greater than 1.');
+                    return;
+                }
+                updateData[`config.${path}.${lastKey}`] = threshold;
+            } else if (field.endsWith('.enabled')) {
+                if (value !== 'true' && value !== 'false') {
+                    await interaction.reply('The value for an enabled field must be either true or false.');
+                    return;
+                }
+                updateData[`config.${path}.${lastKey}`] = value === 'true';
+            } else {
+                const regexWithA = /^<a:(\w+):\d+>$/;
+                const regexWithoutA = /^<:(\w+):\d+>$/;
+                let match = value.match(regexWithA);
+                if (match) {
+                    const name = match[1];
+                    updateData[`config.${path}.${lastKey}`] = name;
+                } else {
+                    match = value.match(regexWithoutA);
+                    if (match) {
+                        const name = match[1];
+                        updateData[`config.${path}.${lastKey}`] = name;
+                    } else {
+                        updateData[`config.${path}.${lastKey}`] = value;
+                    }
+                }
+            }
         } else {
             await interaction.reply('You must provide either a channel or a value.');
             return;

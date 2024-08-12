@@ -40,10 +40,17 @@ module.exports = {
         const serverConfig = await getServerConfig(serverId);
         const starboardConfig = serverConfig.starboard;
 
+        // Check if starboard is enabled
+        if (!starboardConfig.enabled) {
+            console.log('Starboard is not enabled.');
+            return;
+        }
+
         const emoji = starboardConfig.emoji;
         const pinChannelId = starboardConfig.channelToSend;
 
         if (reaction.emoji.name !== emoji) {
+            console.log(reaction.emoji, emoji);
             console.log('Reaction emoji does not match configured emoji.');
             return;
         }
