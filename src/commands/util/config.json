@@ -5,7 +5,6 @@
             "name": "starboard",
             "description": "Looks for messages with a certain emoji and sends them to a specified channel.",
             "channelToSend": "starboard",
-            "channelToListen": "general",
             "emoji": "⭐",
             "threshold": 5,
             "adminOnly": false,
@@ -16,7 +15,7 @@
     "commands": [
         "Commands that can be toggled on and off.",
         {
-            "name": "dailycat",
+            "name": "dailyCat",
             "description": "Gives you a random cat picture every day.",
             "enabled": true
         }
@@ -25,7 +24,7 @@
     "moderation": [
         "Moderation configeration",
         {
-            "name": "superuser",
+            "name": "superUser",
             "description": "Users with this role can use all moderation commands.",
             "enabled": true
         }

@@ -1,16 +1,15 @@
 {
     "starboard": {
         "channelToSend": "starboard",
-        "channelsToListen": "general",
         "emoji": "⭐",
         "threshold": 5,
         "adminOnly": false,
         "enabled": true
     },
-    "superuser": {
+    "superUser": {
         "enabled": true
     },
-    "dailycat": {
+    "dailyCat": {
         "enabled": true
     }
 }
