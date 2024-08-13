@@ -20,9 +20,9 @@ module.exports = {
     data: command,
     async execute(interaction) {
         const serverId = interaction.guild.id;
-        const serverConfig = await getServerConfig.findOne({ where: { server_id: serverId } });
+        const serverConfig = await getServerConfig(serverId);
 
-        if (!serverConfig || !serverConfig.config.dailyCat.enabled) {
+        if (!serverConfig || !serverConfig.dailyCat.enabled) {
             await interaction.reply('Daily cat commands are disabled.');
             return;
         }
