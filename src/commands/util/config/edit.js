@@ -9,7 +9,7 @@ module.exports.data = new SlashCommandSubcommandBuilder()
             .setDescription('The configuration field to edit')
             .setRequired(true)
             .addChoices(
-                { name: 'dailyCat.enabled', value: 'dailyCat.enabled' },
+                { name: 'dailycat.enabled', value: 'dailycat.enabled' },
                 { name: 'starboard.channelToSend', value: 'starboard.channelToSend' },
                 { name: 'starboard.channelToListen', value: 'starboard.channelToListen' },
                 { name: 'starboard.emoji', value: 'starboard.emoji' },
