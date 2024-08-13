@@ -23,7 +23,7 @@ module.exports = {
         const serverConfig = await getServerConfig(serverId);
 
         if (!serverConfig || !serverConfig.dailyCat.enabled) {
-            await interaction.reply('Daily cat commands are disabled.');
+            await interaction.reply({ content: 'Daily cat commands are disabled.', ephemeral: true });
             return;
         }
 
