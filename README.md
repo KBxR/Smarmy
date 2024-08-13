@@ -28,6 +28,7 @@ This Discord bot is a personal project created for experimenting with Discord.js
 ```
 
 Edit ```example.env``` with your bot token, the guild ID you want admin commands to sync to, and your own Discord ID
+Then change the file name to just ```.env```
 
 Example of a filled in env
 ```env
