@@ -9,13 +9,14 @@ module.exports.data = new SlashCommandSubcommandBuilder()
             .setDescription('The configuration field to edit')
             .setRequired(true)
             .addChoices(
+                { name: 'dailyCat.enabled', value: 'dailyCat.enabled' },
                 { name: 'starboard.channelToSend', value: 'starboard.channelToSend' },
                 { name: 'starboard.channelToListen', value: 'starboard.channelToListen' },
                 { name: 'starboard.emoji', value: 'starboard.emoji' },
                 { name: 'starboard.threshold', value: 'starboard.threshold' },
                 { name: 'starboard.adminOnly', value: 'starboard.adminOnly' },
                 { name: 'starboard.enabled', value: 'starboard.enabled' },
-                { name: 'superuser.enabled', value: 'superuser.enabled' }
+                { name: 'superuser.enabled', value: 'superuser.enabled' },
             )
     )
     .addChannelOption(option =>

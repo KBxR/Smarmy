@@ -60,7 +60,12 @@ async function setupDatabase(serverId) {
                 config = await ServerConfig.create({ server_id: serverId, config: configTemplate });
                 console.log(`Config for server ID ${serverId} has been created using the template.`);
             } else {
-                console.log(`Config for server ID ${serverId} already exists.`);
+                const configTemplatePath = path.join(__dirname, 'config.json');
+                const configTemplate = JSON.parse(fs.readFileSync(configTemplatePath, 'utf8'));
+
+                const updatedConfig = { ...configTemplate, ...config.config };
+                await ServerConfig.update({ config: updatedConfig }, { where: { server_id: serverId } });
+                console.log(`Config for server ID ${serverId} has been updated with missing fields.`);
             }
         }
     } catch (error) {

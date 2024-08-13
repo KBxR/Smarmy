@@ -12,6 +12,15 @@
             "enabled": true
         }
     ],
+
+    "commands": [
+        "Commands that can be toggled on and off.",
+        {
+            "name": "dailycat",
+            "description": "Gives you a random cat picture every day.",
+            "enabled": true
+        }
+    ],
             
     "moderation": [
         "Moderation configeration",
