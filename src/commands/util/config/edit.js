@@ -1,5 +1,5 @@
 const { SlashCommandSubcommandBuilder } = require('discord.js');
-const { ServerConfig } = require('@database/setup');
+const { ServerConfig, setupDatabase } = require('@database/setup');
 
 module.exports.data = new SlashCommandSubcommandBuilder()
     .setName('edit')
@@ -37,8 +37,8 @@ module.exports.execute = async function handleEditConfig(interaction) {
         const serverConfig = await ServerConfig.findOne({ where: { server_id: serverId } });
 
         if (!serverConfig) {
-            await interaction.reply(`No configuration found for server ID ${serverId}.`);
-            return;
+            await setupDatabase(serverId);
+            serverConfig = await ServerConfig.findOne({ where: { server_id: serverId } });
         }
 
         const keys = field.split('.');
@@ -54,8 +54,8 @@ module.exports.execute = async function handleEditConfig(interaction) {
 
             if (field === 'starboard.threshold') {
                 const threshold = parseInt(value, 10);
-                if (isNaN(threshold) || threshold <= 1) {
-                    await interaction.reply('The threshold must be a number greater than 1.');
+                if (isNaN(threshold) || threshold <= 0) {
+                    await interaction.reply('The threshold must be a number greater than 0.');
                     return;
                 }
                 updateData[`config.${path}.${lastKey}`] = threshold;
@@ -87,14 +87,8 @@ module.exports.execute = async function handleEditConfig(interaction) {
             return;
         }
 
-        console.log('Update data:', updateData);
-
         // Update the specific field in the JSONB column
         await serverConfig.update(updateData, { where: { server_id: serverId } });
-
-        // Verify the update
-        const updatedConfig = await ServerConfig.findOne({ where: { server_id: serverId } });
-        console.log('Verified updated config:', updatedConfig.config);
 
         await interaction.reply(`Configuration field \`${field}\` has been updated to \`${channel ? channel.id : value}\` for server ID ${serverId}.`);
     } catch (error) {

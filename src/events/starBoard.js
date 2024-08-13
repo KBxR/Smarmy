@@ -50,15 +50,12 @@ module.exports = {
         const pinChannelId = starboardConfig.channelToSend;
 
         if (reaction.emoji.name !== emoji) {
-            console.log(reaction.emoji, emoji);
-            console.log('Reaction emoji does not match configured emoji.');
             return;
         }
 
         const message = reaction.message;
         const starReaction = message.reactions.cache.find(r => r.emoji.name === emoji && r.count > 1);
         if (starReaction) {
-            console.log('Message already has a star reaction.');
             return;
         }
 
@@ -70,7 +67,6 @@ module.exports = {
 
         const member = await reaction.message.guild.members.fetch(user.id);
         if (!await hasStarBoardPermission(serverId, user.id, member)) {
-            console.log('User does not have starboard permission.');
             return;
         }
 
