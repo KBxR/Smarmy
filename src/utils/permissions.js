@@ -11,14 +11,14 @@ client.connect();
 async function hasPermission(serverId, userId, permissionName) {
     // Fetch the latest server configuration
     const serverConfig = await getServerConfig(serverId);
-    const superuserConfig = serverConfig.superuser;
+    const superuserConfig = serverConfig.superUser;
 
     // Check if superuser is enabled
     if (superuserConfig.enabled) {
         // Check if the user has the superuser permission
         const superUserRes = await client.query(`
             SELECT 1 FROM permissions
-            WHERE server_id = $1 AND user_id = $2 AND permission_name = 'superuser'
+            WHERE server_id = $1 AND user_id = $2 AND permission_name = 'superUser'
         `, [serverId, userId]);
 
         if (superUserRes.rowCount > 0) {

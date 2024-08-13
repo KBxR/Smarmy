@@ -14,7 +14,7 @@
     "moderation": [
         "Clusters of roles to allow for multiple commands to be added at once.",
         {
-            "name": "superuser",
+            "name": "superUser",
             "description": "Allows a user to use all commands."
         }
     ]

@@ -34,34 +34,67 @@ module.exports = {
     eventName: 'Star Board',
     name: Events.MessageReactionAdd,
     async execute(reaction, user) {
+        console.log('Reaction added:', reaction.emoji.name, 'by user:', user.tag);
+
         const serverId = reaction.message.guild.id;
 
         // Fetch the latest server configuration
-        const serverConfig = await getServerConfig(serverId);
+        let serverConfig;
+        try {
+            serverConfig = await getServerConfig(serverId);
+        } catch (error) {
+            console.error('Failed to fetch server configuration:', error);
+            return;
+        }
+
+        if (!serverConfig || !serverConfig.starboard) {
+            return;
+        }
+
         const starboardConfig = serverConfig.starboard;
 
         // Check if starboard is enabled
         if (!starboardConfig.enabled) {
-            console.log('Starboard is not enabled.');
             return;
         }
 
         const emoji = starboardConfig.emoji;
         const pinChannelId = starboardConfig.channelToSend;
+        const threshold = starboardConfig.threshold;
 
         if (reaction.emoji.name !== emoji) {
             return;
         }
 
-        const message = reaction.message;
-        const starReaction = message.reactions.cache.find(r => r.emoji.name === emoji && r.count > 1);
-        if (starReaction) {
+        // Ensure the message reactions are fully fetched
+        if (reaction.message.partial) {
+            try {
+                await reaction.message.fetch();
+            } catch (error) {
+                console.error('Something went wrong when fetching the message:', error);
+                return;
+            }
+        }
+
+        // Count the number of reactions matching the configured emoji
+        const reactionCount = reaction.message.reactions.cache.filter(r => r.emoji.name === emoji).reduce((acc, r) => acc + r.count, 0);
+
+        console.log('Reaction count:', reactionCount, 'Threshold:', threshold);
+
+        if (reactionCount < threshold) {
             return;
+        }
+
+        const message = reaction.message;
+        if (threshold <= 1) {
+            const starReaction = message.reactions.cache.find(r => r.emoji.name === emoji && r.count > 1);
+            if (starReaction) {
+                return;
+            }
         }
 
         const messageInfo = await fetchReactionMessage(reaction);
         if (!messageInfo) {
-            console.log('Failed to fetch reaction message.');
             return;
         }
 
