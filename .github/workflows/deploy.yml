@@ -51,6 +51,13 @@ jobs:
         run: |
           sshpass -p ${{ secrets.UNRAID_PASSWORD }} scp -o StrictHostKeyChecking=no -P ${{ secrets.UNRAID_PORT }} docker-compose.yml root@${{ secrets.UNRAID_IP }}:/root/docker-compose.yml
 
+      - name: Clean up old Docker images and containers
+        run: |
+          sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -tt -o StrictHostKeyChecking=no -p ${{ secrets.UNRAID_PORT }} root@${{ secrets.UNRAID_IP }} << EOF
+          docker system prune -af
+          exit
+          EOF
+          
       - name: Deploy to Unraid
         run: |
           sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -tt -o StrictHostKeyChecking=no -p ${{ secrets.UNRAID_PORT }} root@${{ secrets.UNRAID_IP }} << EOF
@@ -73,4 +80,4 @@ jobs:
 
       - name: Check if the app is running
         run: |
-          sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ secrets.UNRAID_IP }} docker ps | grep smarmy || exit 1
+          sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -o StrictHostKeyChecking=no -p ${{ secrets.UNRAID_PORT }} root@${{ secrets.UNRAID_IP }} docker ps | grep smarmy || exit 1
