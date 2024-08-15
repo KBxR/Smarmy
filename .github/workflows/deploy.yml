@@ -49,11 +49,11 @@ jobs:
 
       - name: Copy docker-compose.yml to remote server
         run: |
-          sshpass -p ${{ secrets.UNRAID_PASSWORD }} scp -o StrictHostKeyChecking=no docker-compose.yml root@${{ secrets.UNRAID_IP }}:/root/docker-compose.yml
+          sshpass -p ${{ secrets.UNRAID_PASSWORD }} scp -o StrictHostKeyChecking=no -P ${{ secrets.UNRAID_PORT }} docker-compose.yml root@${{ secrets.UNRAID_IP }}:/root/docker-compose.yml
 
       - name: Deploy to Unraid
         run: |
-          sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -tt -o StrictHostKeyChecking=no root@${{ secrets.UNRAID_IP }} << EOF
+          sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -tt -o StrictHostKeyChecking=no -p ${{ secrets.UNRAID_PORT }} root@${{ secrets.UNRAID_IP }} << EOF
           docker pull sicklesheen/smarmy:latest
           export BOT_TOKEN=${{ secrets.BOT_TOKEN }}
           export CLIENT_ID=${{ secrets.CLIENT_ID }}
