@@ -109,6 +109,14 @@ module.exports = {
             .setFooter({ text: `Starred by ${user.tag}`, iconURL: user.displayAvatarURL() })
             .setTimestamp(reaction.message.createdTimestamp);
 
+        // Check if the message content is a link to an image
+        const imageUrlRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/i;
+        const imageUrlMatch = messageInfo.content.match(imageUrlRegex);
+        if (imageUrlMatch) {
+            embed.setImage(imageUrlMatch[0]);
+            messageInfo.content = ''; // Set message content to blank if it is a link to an image
+        }
+
         // Add the message content to the embed
         if (messageInfo.content) {
             embed.setDescription(messageInfo.content);
@@ -122,13 +130,7 @@ module.exports = {
             embed.setImage(imageAttachment.url);
         }
 
-        // Check if the message content is a link to an image
-        const imageUrlRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/i;
-        const imageUrlMatch = messageInfo.content.match(imageUrlRegex);
-        if (imageUrlMatch) {
-            embed.setImage(imageUrlMatch[0]);
-        }
-        
+
         const tenorGifLink = messageInfo.content.match(/https:\/\/tenor\.com\/view\/[^\s]+/);
         if (tenorGifLink) {
             embed.setImage(tenorGifLink[0]);
