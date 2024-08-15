@@ -34,9 +34,10 @@ Example of a filled in env
 ```env
 #BOT CONFIG
 BOT_TOKEN= Your Bot Token
+CLIENT_ID= Application token
 GUILD_ID= Bot manage server for admin commands
 ADMIN_ID= your discord id
-DATABASE_URL=postgres://yourusername:yourpassword@databaseip:5432/databasename
+DATABASE_URL= postgres://yourusername:yourpassword@databaseip:5432/databasename
 
 #API KEYS
 
