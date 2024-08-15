@@ -73,9 +73,11 @@ module.exports = {
                 await i.update({ embeds: [generateEmbed(currentIndex)], components: [createActionRow(currentIndex)] });
             });
             
-            collector.on('end', collected => {
+            collector.on('end', async collected => {
                 if (collected.size === 0) {
-                    message.edit({ components: [] });
+                    await message.edit({ components: [] });
+                } else {
+                    await message.edit({ components: [] });
                 }
             });
         }
