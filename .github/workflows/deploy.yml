@@ -54,10 +54,13 @@ jobs:
       - name: Clean up old Docker images and containers
         run: |
           sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -tt -o StrictHostKeyChecking=no -p ${{ secrets.UNRAID_PORT }} root@${{ secrets.UNRAID_IP }} << EOF
-          docker system prune -af
+          # Remove old containers
+          docker container prune -f
+          # Remove old images except the latest one
+          docker images --filter "dangling=true" -q | xargs -r docker rmi
           exit
           EOF
-          
+
       - name: Deploy to Unraid
         run: |
           sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -tt -o StrictHostKeyChecking=no -p ${{ secrets.UNRAID_PORT }} root@${{ secrets.UNRAID_IP }} << EOF
