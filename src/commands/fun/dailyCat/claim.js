@@ -25,39 +25,47 @@ module.exports = {
                 ORDER BY fetched_at DESC
                 LIMIT 1
             `, [userId]);
-
+        
             if (lastCatRes.rowCount > 0) {
                 const lastFetchedAt = new Date(lastCatRes.rows[0].fetched_at);
                 const now = new Date();
-                const hoursSinceLastFetch = (now - lastFetchedAt) / (1000 * 60 * 60);
-
-                if (hoursSinceLastFetch < 24) {
-                    await interaction.reply({ content: 'You can only fetch a new cat picture once every 24 hours.', ephemeral: true });
+        
+                // Check if the last fetched date is today
+                const lastFetchedDay = lastFetchedAt.getUTCDate();
+                const lastFetchedMonth = lastFetchedAt.getUTCMonth();
+                const lastFetchedYear = lastFetchedAt.getUTCFullYear();
+        
+                const currentDay = now.getUTCDate();
+                const currentMonth = now.getUTCMonth();
+                const currentYear = now.getUTCFullYear();
+        
+                if (lastFetchedDay === currentDay && lastFetchedMonth === currentMonth && lastFetchedYear === currentYear) {
+                    await interaction.reply({ content: 'You can only fetch a new cat picture once per day. Please try again tomorrow.', ephemeral: true });
                     return;
                 }
             }
         }
-
+        
         const pictureUrl = await fetchCatPicture(catKey);
-
+        
         const insertRes = await client.query(`
             INSERT INTO cat_pictures (user_id, picture_url, fetched_at)
             VALUES ($1, $2, NOW())
             RETURNING id
         `, [userId, pictureUrl]);
-
+        
         const catId = insertRes.rows[0].id;
-
+        
         const randomColor = getRandomHexColor();
-
+        
         const embed = new EmbedBuilder()
             .setColor(randomColor)
             .setTitle('Here is your daily cat picture! 🐱')
-            .setDescription('You can get a new cat picture in 24 hours.')
+            .setDescription('You can get a new cat picture tomorrow.')
             .setImage(pictureUrl)
             .setFooter({ text: `Cat ID: ${catId}`})
             .setTimestamp();
-
+        
         await interaction.reply({ embeds: [embed], ephemeral: false });
     }
 };
