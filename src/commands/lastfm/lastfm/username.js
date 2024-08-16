@@ -1,5 +1,5 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
-const { User } = require('@database/models');
+const { UserInfo, generateUserInfo } = require('@database/setup');
 const { getLastFmUser } = require('@api/lastFm');
 
 module.exports.data = new SlashCommandSubcommandBuilder()
@@ -16,12 +16,31 @@ module.exports.execute = async function handleUsername(interaction) {
 
     try {
         // Update or create the user record in the database
-        let user = await User.findByPk(userID);
+        let user = await UserInfo.findByPk(userID);
         if (!user) {
-            user = await User.create({ userID: userID, lastFMUsername: username });
+            console.log(`User with ID ${userID} not found. Generating new user info.`);
+            await generateUserInfo(userID);
+            try {
+                user = await UserInfo.create({ user_id: userID, info: { lastfm: { username: username } } });
+                console.log(`User with ID ${userID} created.`);
+            } catch (error) {
+                if (error.name === 'SequelizeUniqueConstraintError') {
+                    console.log(`User with ID ${userID} already exists. Updating Last.fm username.`);
+                    user = await UserInfo.findByPk(userID);
+                    const updateData = {};
+                    updateData['info.lastfm.username'] = username;
+                    await user.update(updateData, { where: { user_id: userID } });
+                    console.log(`User with ID ${userID} updated.`);
+                } else {
+                    throw error;
+                }
+            }
         } else {
-            user.lastFMUsername = username;
-            await user.save();
+            console.log(`User with ID ${userID} found. Updating Last.fm username.`);
+            const updateData = {};
+            updateData['info.lastfm.username'] = username;
+            await user.update(updateData, { where: { user_id: userID } });
+            console.log(`User with ID ${userID} updated.`);
         }
 
         // Fetch user info from Last.fm

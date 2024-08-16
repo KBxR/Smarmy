@@ -1,6 +1,7 @@
 const { ActivityType, Events } = require('discord.js');
-const { User } = require('@database/models');
 const { getBotInfo } = require('@utils/botInfoUtil');
+const { sendWOTD } = require('@events/cheadlewotd');
+const cron = require('node-cron');
 
 module.exports = {
     eventName: 'Ready',
@@ -21,11 +22,13 @@ module.exports = {
             // Set the bot's activity from the database
             client.user.setActivity(statusName, { type: activityTypeMap[statusType] });
 
-            // Sync the User model with the database
-            await User.sync();
-            console.log('User model synchronized with the database');
-
             console.log(`Ready! Logged in as ${client.user.tag}`);
+
+            cron.schedule('0 0 * * *', () => {
+                sendWOTD(client, '1273979538505859253');
+                console.log('Scheduled task completed.');
+            });
+
         } catch (error) {
             console.error('Error setting bot status or synchronizing User model:', error);
         }

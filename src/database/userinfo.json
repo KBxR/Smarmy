@@ -1,0 +1,12 @@
+{
+    "lastfm": {
+        "username": "username"
+    },
+
+    "dailycat":{
+        "cats": 0,
+        "lastcat": "date",
+        "traded": 0,
+        "favorite": "catid"
+    }
+}

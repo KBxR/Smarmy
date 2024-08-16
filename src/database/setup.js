@@ -7,6 +7,20 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     logging: false,
 });
 
+const UserInfo = sequelize.define('UserInfo', {
+    user_id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    info: {
+        type: DataTypes.JSONB,
+        allowNull: false,
+    },
+}, {
+    tableName: 'user_info',
+    timestamps: false,
+});
+
 const Permission = sequelize.define('Permission', {
     server_id: {
         type: DataTypes.STRING,
@@ -51,6 +65,9 @@ async function setupDatabase(serverId) {
         await ServerConfig.sync();
         console.log('Server config table is successfully created or already exists');
 
+        await UserInfo.sync();
+        console.log('User info table is successfully created or already exists');
+
         if (serverId) {
             let config = await ServerConfig.findOne({ where: { server_id: serverId } });
             if (!config) {
@@ -73,6 +90,29 @@ async function setupDatabase(serverId) {
     }
 }
 
+async function generateUserInfo(userId) {
+    try {
+        await sequelize.authenticate();
+        console.log('Connection has been established successfully.');
+
+        await UserInfo.sync();
+        console.log('User info table is successfully created or already exists');
+
+        let userInfo = await UserInfo.findOne({ where: { user_id: userId } });
+        if (!userInfo) {
+            const userInfoTemplatePath = path.join(__dirname, 'userinfo.json');
+            const userInfoTemplate = JSON.parse(fs.readFileSync(userInfoTemplatePath, 'utf8'));
+
+            userInfo = await UserInfo.create({ user_id: userId, info: userInfoTemplate });
+            console.log(`User info for user ID ${userId} has been created using the template.`);
+        } else {
+            console.log(`User info for user ID ${userId} already exists.`);
+        }
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+}
+
 setupDatabase();
 
-module.exports = { Permission, ServerConfig, setupDatabase };
+module.exports = { Permission, ServerConfig, setupDatabase, UserInfo, generateUserInfo };
