@@ -2,7 +2,6 @@ const { AttachmentBuilder } = require('discord.js');
 const { createCanvas, loadImage, registerFont } = require('canvas');
 const path = require('path');
 
-// Register the font
 const fontPath = path.join(__dirname, 'Impact.ttf');
 registerFont(fontPath, { family: 'Impact' });
 
