@@ -2,8 +2,15 @@ const { AttachmentBuilder } = require('discord.js');
 const { createCanvas, loadImage, registerFont } = require('canvas');
 const path = require('path');
 
+// Define the path to the font file
 const fontPath = path.join(__dirname, 'Impact.ttf');
-registerFont(fontPath, { family: 'Impact' });
+
+// Check if the font file exists
+if (fs.existsSync(fontPath)) {
+    registerFont(fontPath, { family: 'Impact' });
+} else {
+    console.error(`Font file not found at path: ${fontPath}`);
+}
 
 const PICTURE_URL = "https://cdn.discordapp.com/attachments/1273979538505859253/1273980702211444847/Don_Cheadle.jpg?ex=66c0967c&is=66bf44fc&hm=8734e7a1cb9880d0ff09b01c48a516eb469595729744adcc99beb06357fd69d2&";
 
