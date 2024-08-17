@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Define the path to the font file
-const fontPath = path.join(__dirname, 'Impact.ttf');
+const fontPath = path.join(__dirname, 'IMPACT.TTF');
 
 // Check if the font file exists
 if (fs.existsSync(fontPath)) {
