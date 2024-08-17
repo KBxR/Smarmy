@@ -13,7 +13,7 @@ if (fs.existsSync(fontPath)) {
     console.error(`Font file not found at path: ${fontPath}`);
 }
 
-const PICTURE_URL = "https://cdn.discordapp.com/attachments/1273979538505859253/1273980702211444847/Don_Cheadle.jpg?ex=66c0967c&is=66bf44fc&hm=8734e7a1cb9880d0ff09b01c48a516eb469595729744adcc99beb06357fd69d2&";
+const localImagePath = path.join(__dirname, 'Don_Cheadle.jpg');
 
 async function sendWOTD(client, channelId) {
     if (!client) {
@@ -23,10 +23,7 @@ async function sendWOTD(client, channelId) {
 
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch(PICTURE_URL);
-        const arrayBuffer = await response.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-        const image = await loadImage(buffer);
+        const image = await loadImage(localImagePath);
 
         const canvas = createCanvas(image.width, image.height);
         const ctx = canvas.getContext('2d');
