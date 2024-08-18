@@ -112,8 +112,6 @@ async function getMostRecentCatDate(userId) {
         order: [['fetched_at', 'DESC']]
     });
 
-    console.log(mostRecentCat);
-
     if (mostRecentCat && mostRecentCat.date) {
         const date = new Date(mostRecentCat.date);
         if (!isNaN(date.getTime())) {

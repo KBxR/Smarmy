@@ -24,7 +24,7 @@ module.exports = {
         const value = interaction.options.getString('value');
         const userID = interaction.user.id;
 
-        if (field !== 'favourite') {
+        if (field !== 'favorite') {
             return interaction.reply({ content: 'Invalid field specified.', ephemeral: true });
         }
 
