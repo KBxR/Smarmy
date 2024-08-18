@@ -1,8 +1,8 @@
-const { User, BotInfo } = require('@database/models');
+const { UserInfo, BotInfo } = require('@database/models');
 
 class DBHandler {
     static async loadUserData(userID) {
-        return await User.findByPk(userID);
+        return await UserInfo.findByPk(userID);
     }
 
     static async saveUserData(userID, data) {
