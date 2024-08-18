@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { Sequelize, DataTypes } = require('sequelize');
+const { format } = require('date-fns');
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
@@ -90,7 +91,7 @@ async function setupDatabase(serverId) {
     }
 }
 
-async function generateUserInfo(userId) {
+async function generateUserInfo(userId, numberOfCats) {
     try {
         await sequelize.authenticate();
         console.log('Connection has been established successfully.');
@@ -98,15 +99,36 @@ async function generateUserInfo(userId) {
         await UserInfo.sync();
         console.log('User info table is successfully created or already exists');
 
+        // Retrieve the most recent cat date from the database
+        const mostRecentCat = await Cat.findOne({
+            where: { user_id: userId },
+            order: [['date', 'DESC']]
+        });
+        const mostRecentCatDate = mostRecentCat ? format(new Date(mostRecentCat.date), 'dd-MM-yyyy') : null;
+
         let userInfo = await UserInfo.findOne({ where: { user_id: userId } });
         if (!userInfo) {
             const userInfoTemplatePath = path.join(__dirname, 'userinfo.json');
             const userInfoTemplate = JSON.parse(fs.readFileSync(userInfoTemplatePath, 'utf8'));
 
+            // Set the number of cats and the most recent cat date in the template
+            userInfoTemplate.dailycat.cats = numberOfCats;
+            userInfoTemplate.dailycat.lastcat = mostRecentCatDate;
+
             userInfo = await UserInfo.create({ user_id: userId, info: userInfoTemplate });
             console.log(`User info for user ID ${userId} has been created using the template.`);
         } else {
-            console.log(`User info for user ID ${userId} already exists.`);
+            // Update the number of cats and the most recent cat date in the existing user info
+            const updatedInfo = { 
+                ...userInfo.info, 
+                dailycat: { 
+                    ...userInfo.info.dailycat, 
+                    cats: numberOfCats, 
+                    lastcat: mostRecentCatDate 
+                } 
+            };
+            await UserInfo.update({ info: updatedInfo }, { where: { user_id: userId } });
+            console.log(`User info for user ID ${userId} has been updated with the number of cats and the most recent cat date.`);
         }
     } catch (error) {
         console.error('Unable to connect to the database:', error);
