@@ -111,7 +111,16 @@ async function getMostRecentCatDate(userId) {
         where: { user_id: userId },
         order: [['fetched_at', 'DESC']]
     });
-    return mostRecentCat ? format(new Date(mostRecentCat.date), 'dd-MM-yyyy') : null;
+
+    console.log(mostRecentCat);
+
+    if (mostRecentCat && mostRecentCat.date) {
+        const date = new Date(mostRecentCat.date);
+        if (!isNaN(date.getTime())) {
+            return format(date, 'dd-MM-yyyy');
+        }
+    }
+    return null;
 }
 
 async function getUserInfo(userId) {
