@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { Sequelize, DataTypes } = require('sequelize');
-const { Cat } = require('./models');
+const { CatPicture } = require('./models');
 const { format } = require('date-fns');
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
@@ -103,11 +103,11 @@ async function syncUserInfoTable() {
 }
 
 async function getNumberOfCats(userId) {
-    return await Cat.count({ where: { user_id: userId } });
+    return await CatPicture.count({ where: { user_id: userId } });
 }
 
 async function getMostRecentCatDate(userId) {
-    const mostRecentCat = await Cat.findOne({
+    const mostRecentCat = await CatPicture.findOne({
         where: { user_id: userId },
         order: [['date', 'DESC']]
     });
