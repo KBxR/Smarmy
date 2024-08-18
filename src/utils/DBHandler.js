@@ -1,4 +1,5 @@
-const { UserInfo, BotInfo } = require('@database/models');
+const { BotInfo } = require('@database/models');
+const { UserInfo } = require('@database/setup');
 
 class DBHandler {
     static async loadUserData(userID) {
