@@ -11,7 +11,7 @@ module.exports = {
                 .setDescription('The setting to change')
                 .setRequired(true)
                 .addChoices(
-                    { name: 'FavouriteCat', value: 'favourite' },
+                    { name: 'FavoriteCat', value: 'favorite' },
                 )
         )
         .addStringOption(option =>
@@ -39,16 +39,20 @@ module.exports = {
             const ownedCats = await CatPicture.findAll({ where: { user_id: userID } });
             const ownedCatIds = ownedCats.map(cat => cat.id.toString());
 
-            console.log('Owned cats:', ownedCatIds);
-
             if (!ownedCatIds.includes(value)) {
                 return interaction.reply({ content: 'You do not own this cat.', ephemeral: true });
             }
 
-            // Update the favourite cat
-            user.info.dailycat = user.info.dailycat || {};
-            user.info.dailycat.favourite = value;
-            await user.save();
+            let userInfo = await UserInfo.findOne({ where: { user_id: userID } });
+            const updatedInfo = { 
+                ...userInfo.info, 
+                dailycat: { 
+                    ...userInfo.info.dailycat, 
+                    favorite: value
+                } 
+            };
+
+            await UserInfo.update({ info: updatedInfo }, { where: { user_id: userID } });
 
             return interaction.reply({ content: `Your favourite cat has been updated to ${value}.`, ephemeral: true });
         } catch (error) {
