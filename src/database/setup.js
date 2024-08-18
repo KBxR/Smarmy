@@ -91,13 +91,16 @@ async function setupDatabase(serverId) {
     }
 }
 
-async function generateUserInfo(userId, numberOfCats) {
+async function generateUserInfo(userId) {
     try {
         await sequelize.authenticate();
         console.log('Connection has been established successfully.');
 
         await UserInfo.sync();
         console.log('User info table is successfully created or already exists');
+
+        // Retrieve the number of cats the user has
+        const numberOfCats = await Cat.count({ where: { user_id: userId } });
 
         let mostRecentCatDate = null;
         if (numberOfCats > 0) {
