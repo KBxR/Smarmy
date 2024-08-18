@@ -61,7 +61,8 @@ module.exports = {
                 dailycat: {
                     ...userInfo.info.dailycat,
                     lastcat: currentDate,
-                    cats: (userInfo.info.dailycat.cats || 0) + 1
+                    cats: (userInfo.info.dailycat.cats || 0) + 1,
+                    catBucks: (userInfo.info.dailycat.catBucks || 0) + 1
                 }
             };
             await UserInfo.update({ info: updatedInfo }, { where: { user_id: userId } });
@@ -72,7 +73,7 @@ module.exports = {
             .setTitle('Here is your daily cat picture! 🐱')
             .setDescription('You can get a new cat picture in 24 hours.')
             .setImage(pictureUrl)
-            .setFooter({ text: `Cat ID: ${catId}`})
+            .setFooter({ text: `Cat ID: ${catId} • You got a Cat Buck!` })
             .setTimestamp();
 
         await interaction.reply({ embeds: [embed], ephemeral: false });
