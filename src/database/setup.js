@@ -109,7 +109,7 @@ async function getNumberOfCats(userId) {
 async function getMostRecentCatDate(userId) {
     const mostRecentCat = await CatPicture.findOne({
         where: { user_id: userId },
-        order: [['date', 'DESC']]
+        order: [['fetched_at', 'DESC']]
     });
     return mostRecentCat ? format(new Date(mostRecentCat.date), 'dd-MM-yyyy') : null;
 }
