@@ -80,5 +80,6 @@ async function sendWOTD(client, channelId) {
     }
 }
 module.exports = {
+    eventName: 'Don Cheadle Word of the Day',
     sendWOTD
 };
