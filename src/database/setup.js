@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { Sequelize, DataTypes } = require('sequelize');
+const { Cat } = require('@database/models');
 const { format } = require('date-fns');
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
