@@ -3,6 +3,8 @@ const { catKey, databasePath, adminId } = require('@config');
 const { getRandomHexColor } = require('@utils');
 const { fetchCatPicture } = require('@api/catApi');
 const { Client } = require('pg');
+const { UserInfo } = require('@database/setup');
+const { format } = require('date-fns');
 
 const client = new Client({
     connectionString: `${databasePath}`,
@@ -49,6 +51,21 @@ module.exports = {
         const catId = insertRes.rows[0].id;
 
         const randomColor = getRandomHexColor();
+
+        // Update dailycat.lastcat to the current date
+        const currentDate = format(new Date(), 'dd-MM-yyyy');
+        let userInfo = await UserInfo.findOne({ where: { user_id: userId } });
+        if (userInfo) {
+            const updatedInfo = {
+                ...userInfo.info,
+                dailycat: {
+                    ...userInfo.info.dailycat,
+                    lastcat: currentDate,
+                    cats: (userInfo.info.dailycat.cats || 0) + 1
+                }
+            };
+            await UserInfo.update({ info: updatedInfo }, { where: { user_id: userId } });
+        }
 
         const embed = new EmbedBuilder()
             .setColor(randomColor)

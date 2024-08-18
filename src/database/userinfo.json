@@ -5,7 +5,7 @@
 
     "dailycat":{
         "cats": 0,
-        "lastcat": "date",
+        "lastcat": "none",
         "favorite": "0",
         "catBucks": 0
     }
