@@ -29,11 +29,6 @@ module.exports = {
         }
 
         try {
-            // Fetch user info from the database
-            let user = await UserInfo.findByPk(userID);
-            if (!user) {
-                return interaction.reply({ content: 'User not found.', ephemeral: true });
-            }
 
             // Check if the user owns the cat
             const ownedCats = await CatPicture.findAll({ where: { user_id: userID } });

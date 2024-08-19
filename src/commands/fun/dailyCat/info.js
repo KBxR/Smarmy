@@ -1,6 +1,4 @@
-const { UserInfo } = require('@database/setup');
 const { CatPicture } = require('@database/models');
-const { generateUserInfo } = require('@database/setup');
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
 const { getRandomHexColor } = require('@utils');
 
@@ -13,13 +11,6 @@ module.exports = {
         const userID = interaction.user.id;
 
         try {
-            // Fetch user info from the database
-            let user = await UserInfo.findByPk(userID);
-            if (!user) {
-                // Generate user info if it doesn't exist
-                await generateUserInfo(userID);
-                user = await UserInfo.findByPk(userID);
-            }
 
             if (!user.info.dailycat) {
                 return interaction.reply({ content: 'No cat information found for this user.', ephemeral: true });

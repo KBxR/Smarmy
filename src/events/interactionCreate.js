@@ -1,9 +1,19 @@
 const { Events } = require('discord.js');
+const { UserInfo, generateUserInfo } = require('@database/setup');
 
 module.exports = {
     eventName: 'Interaction Create',
     name: Events.InteractionCreate,
     async execute(interaction) {
+        const userId = interaction.user.id;
+
+        let user = await UserInfo.findByPk(userId);
+        if (!user) {
+            // Generate user info if it doesn't exist
+            await generateUserInfo(userId);
+            user = await UserInfo.findByPk(userId);
+        }
+
         // Check for chat input command
         if (interaction.isChatInputCommand()) {
             const command = interaction.client.commands.get(interaction.commandName);
