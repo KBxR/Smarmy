@@ -1,6 +1,7 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { databasePath } = require('@config');
 const { Client } = require('pg');
+const { format } = require('date-fns');
 
 const client = new Client({
     connectionString: `${databasePath}`,
@@ -37,7 +38,7 @@ module.exports = {
                 const picture = pictures[index];
                 return new EmbedBuilder()
                     .setTitle(`Cat Picture ${index + 1} of ${pictures.length}`)
-                    .setDescription(`Fetched on: ${new Date(picture.fetched_at).toLocaleDateString()}`)
+                    .setDescription(`Fetched on: ${format(new Date(picture.fetched_at), 'dd-MM-yyyy')}`)
                     .setImage(picture.picture_url)
                     .setFooter({ text: `Cat ID: ${picture.id}` });
             };
