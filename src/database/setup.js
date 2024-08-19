@@ -132,6 +132,7 @@ async function createUserInfo(userId, numberOfCats, mostRecentCatDate) {
     if (numberOfCats > 0) {
         userInfoTemplate.dailycat.cats = numberOfCats;
         userInfoTemplate.dailycat.lastcat = mostRecentCatDate;
+        userInfoTemplate.dailycat.catBucks = numberOfCats;
     }
 
     return await UserInfo.create({ user_id: userId, info: userInfoTemplate });
@@ -143,7 +144,8 @@ async function updateUserInfo(userId, userInfo, numberOfCats, mostRecentCatDate)
         dailycat: {
             ...userInfo.info.dailycat,
             cats: numberOfCats,
-            lastcat: mostRecentCatDate
+            lastcat: mostRecentCatDate,
+            catBucks: numberOfCats
         }
     };
     await UserInfo.update({ info: updatedInfo }, { where: { user_id: userId } });
