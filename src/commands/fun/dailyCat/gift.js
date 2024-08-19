@@ -1,6 +1,9 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
+const { catKey } = require('@config');
 const { UserInfo, generateUserInfo } = require('@database/setup');
-const { CodeUsage, Codes } = require('@database/models');
+const { CodeUsage, Codes, CatPicture } = require('@database/models');
+const { fetchCatPicture } = require('@api/catApi');
+const { format } = require('date-fns');
 
 module.exports = {
     data: new SlashCommandSubcommandBuilder()
@@ -16,7 +19,6 @@ module.exports = {
         const userId = interaction.user.id;
 
         try {
-
             let user = await UserInfo.findByPk(userId);
             if (!user) {
                 // Generate user info if it doesn't exist
@@ -49,8 +51,6 @@ module.exports = {
                         return interaction.reply({ content: 'You can only use this code once a week.', ephemeral: true });
                     }
                 }
-
-                await CodeUsage.create({ user_id: userId, code: code, used_at: now });
             }
 
             if (gift.value.catbucks) {
@@ -73,7 +73,39 @@ module.exports = {
                 embed.addFields({ name: 'Cat Bucks', value: `You have received ${codeCatBucks} Cat Bucks!` });
             }
 
-            // Add code usage to the code_usage table
+            if (gift.value.cat) {
+                const pictureUrl = await fetchCatPicture(catKey);
+            
+                // Use the CatPicture model to insert the new cat picture
+                const insertRes = await CatPicture.create({
+                    user_id: userId,
+                    picture_url: pictureUrl,
+                    fetched_at: new Date()
+                });
+            
+                const catId = insertRes.id;
+            
+                // Update dailycat.lastcat to the current date
+                const currentDate = format(new Date(), 'dd-MM-yyyy');
+                let userInfo = await UserInfo.findOne({ where: { user_id: userId } });
+                if (userInfo) {
+                    const updatedInfo = {
+                        ...userInfo.info,
+                        dailycat: {
+                            ...userInfo.info.dailycat,
+                            lastcat: currentDate,
+                            cats: (userInfo.info.dailycat.cats || 0) + 1
+                        }
+                    };
+                    await UserInfo.update({ info: updatedInfo }, { where: { user_id: userId } });
+                }
+            
+                embed.addFields({ name: 'Cat Picture', value: `You have received a cat picture!` })
+                    .setImage(pictureUrl)
+                    .setFooter({ text: `Cat ID: ${catId}` });
+            }
+
+            // Log code usage only if the gift was successfully redeemed
             await CodeUsage.create({ user_id: userId, code, used_at: now });
 
             interaction.reply({ embeds: [embed] });
