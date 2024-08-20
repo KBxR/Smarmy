@@ -2,22 +2,23 @@ const { SlashCommandBuilder } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('play')
         .setDescription('Play a FLAC file in a voice channel')
-        .addStringOption(option =>
+        .addAttachmentOption(option =>
             option.setName('file')
-                .setDescription('The path to the FLAC file')
+                .setDescription('The FLAC file to play')
                 .setRequired(true)),
 
     async execute(interaction) {
-        const filePath = interaction.options.getString('file');
+        const attachment = interaction.options.getAttachment('file');
 
-        // Check if the file exists
-        if (!fs.existsSync(filePath) || path.extname(filePath) !== '.flac') {
-            return interaction.reply({ content: 'Invalid file path or file is not a FLAC file.', ephemeral: true });
+        // Check if the file is a FLAC file
+        if (path.extname(attachment.name) !== '.flac') {
+            return interaction.reply({ content: 'The file is not a FLAC file.', ephemeral: true });
         }
 
         const channel = interaction.member.voice.channel;
@@ -32,23 +33,32 @@ module.exports = {
         });
 
         const player = createAudioPlayer();
-        const resource = createAudioResource(filePath);
+
+        // Download the file
+        const response = await axios.get(attachment.url, { responseType: 'arraybuffer' });
+        const buffer = Buffer.from(response.data, 'binary');
+        const tempFilePath = path.join(__dirname, 'temp.flac');
+        fs.writeFileSync(tempFilePath, buffer);
+
+        const resource = createAudioResource(tempFilePath);
 
         player.play(resource);
         connection.subscribe(player);
 
         player.on(AudioPlayerStatus.Playing, () => {
-            interaction.reply({ content: `Now playing: ${path.basename(filePath)}` });
+            interaction.reply({ content: `Now playing: ${attachment.name}` });
         });
 
         player.on(AudioPlayerStatus.Idle, () => {
             connection.destroy();
+            fs.unlinkSync(tempFilePath); // Clean up the temporary file
         });
 
         player.on('error', error => {
             console.error('Error:', error);
             interaction.reply({ content: 'An error occurred while playing the file.', ephemeral: true });
             connection.destroy();
+            fs.unlinkSync(tempFilePath); // Clean up the temporary file
         });
     },
 };
