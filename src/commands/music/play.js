@@ -1,8 +1,9 @@
-const { SlashCommandBuilder } = require('discord.js');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
-const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
+const fs = require('fs');
+const sodium = require('libsodium-wrappers');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -14,6 +15,7 @@ module.exports = {
                 .setRequired(true)),
 
     async execute(interaction) {
+        await sodium.ready; // Ensure sodium is ready
         const attachment = interaction.options.getAttachment('file');
 
         // Check if the file is a FLAC file
