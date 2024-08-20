@@ -8,7 +8,6 @@ module.exports.data = new SlashCommandSubcommandBuilder()
         option.setName('channel')
             .setDescription('The channel ID to send the test message to.')
             .setRequired(true));
-            
 
 module.exports.execute = async function handleTest(interaction) {
     const client = interaction.client;

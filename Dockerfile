@@ -9,6 +9,10 @@ FROM node:20
 WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY . .
+
+# Install ffmpeg
+RUN apt-get update && apt-get install -y ffmpeg
+
 ENV BOT_TOKEN=$BOT_TOKEN
 ENV CLIENT_ID=$CLIENT_ID
 ENV GUILD_ID=$GUILD_ID
@@ -21,4 +25,5 @@ ENV LASTFM_SECRET=$LASTFM_SECRET
 ENV REBRICK_KEY=$REBRICK_KEY
 ENV CAT_KEY=$CAT_KEY
 ENV NASA_KEY=$NASA_KEY
+
 CMD ["npm", "start_and_deploy"]
