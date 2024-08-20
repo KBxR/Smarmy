@@ -6,13 +6,23 @@ const { getRandomHexColor } = require('@utils');
 module.exports = {
     data: new SlashCommandSubcommandBuilder()
         .setName('info')
-        .setDescription('Get a user\'s cat info.'),
+        .setDescription('Get a user\'s cat info.')
+        .addUserOption(option =>
+            option.setName('member')
+                .setDescription('The user to get cat info for')
+                .setRequired(false)),
 
     async execute(interaction) {
-        const userID = interaction.user.id;
+        let userId = interaction.user.id;
+
+        // use the members id if it was provided
+        if (interaction.options.getUser('member')) {
+            userId = interaction.options.getUser('member').id;
+        }
+        
 
         try {
-            let user = await UserInfo.findByPk(userID);
+            let user = await UserInfo.findByPk(userId);
 
             if (!user.info.dailycat) {
                 return interaction.reply({ content: 'No cat information found for this user.', ephemeral: true });
