@@ -12,14 +12,14 @@ module.exports = {
         .addStringOption(option =>
             option.setName('code')
                 .setDescription('The code of the gift')
-                .setRequired(true)
-        ),
+                .setRequired(true)),
     async execute(interaction) {
-        const code = interaction.options.getString('code');
         const userId = interaction.user.id;
+        const code = interaction.options.getString('code');
 
         try {
             let user = await UserInfo.findByPk(userId);
+
             if (!user) {
                 // Generate user info if it doesn't exist
                 await generateUserInfo(userId);
@@ -39,7 +39,7 @@ module.exports = {
 
             const now = new Date();
 
-            if (code === 'weekly') {
+            if (gift.value.use === 'weekly') {
                 const lastUsed = await CodeUsage.findOne({ where: { user_id: userId, code } });
 
                 if (lastUsed) {
@@ -50,6 +50,12 @@ module.exports = {
                     if (lastUsedDate > oneWeekAgo) {
                         return interaction.reply({ content: 'You can only use this code once a week.', ephemeral: true });
                     }
+                }
+            } else if (gift.value.use === 'once') {
+                const lastUsed = await CodeUsage.findOne({ where: { user_id: userId, code } });
+
+                if (lastUsed) {
+                    return interaction.reply({ content: 'This code can only be used once.', ephemeral: true });
                 }
             }
 
@@ -75,16 +81,16 @@ module.exports = {
 
             if (gift.value.cat) {
                 const pictureUrl = await fetchCatPicture(catKey);
-            
+
                 // Use the CatPicture model to insert the new cat picture
                 const insertRes = await CatPicture.create({
                     user_id: userId,
                     picture_url: pictureUrl,
                     fetched_at: new Date()
                 });
-            
+
                 const catId = insertRes.id;
-            
+
                 // Update dailycat.lastcat to the current date
                 const currentDate = format(new Date(), 'dd-MM-yyyy');
                 let userInfo = await UserInfo.findOne({ where: { user_id: userId } });
@@ -99,7 +105,7 @@ module.exports = {
                     };
                     await UserInfo.update({ info: updatedInfo }, { where: { user_id: userId } });
                 }
-            
+
                 embed.addFields({ name: 'Cat Picture', value: `You have received a cat picture!` })
                     .setImage(pictureUrl)
                     .setFooter({ text: `Cat ID: ${catId}` });
