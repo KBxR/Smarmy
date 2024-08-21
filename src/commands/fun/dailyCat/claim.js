@@ -33,7 +33,7 @@ module.exports = {
                 const now = new Date();
                 const hoursSinceLastFetch = (now - lastFetchedAt) / (1000 * 60 * 60);
 
-                if (hoursSinceLastFetch < 24) {
+                if (hoursSinceLastFetch < 24 && !lastPictureUrl.includes('imgur.com')) {
                     await interaction.reply({ content: 'You can only fetch a new cat picture once every 24 hours.', ephemeral: true });
                     return;
                 }
