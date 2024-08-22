@@ -14,8 +14,8 @@ client.connect();
 
 module.exports = {
     data: new SlashCommandSubcommandBuilder()
-        .setName('claim')
-        .setDescription('Fetch today\'s cat picture'),
+        .setName('daily')
+        .setDescription('Get a daily cat picture'),
     async execute(interaction) {
         const userId = interaction.options.getUser('member')?.id || interaction.user.id;
         

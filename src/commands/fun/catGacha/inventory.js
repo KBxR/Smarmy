@@ -11,11 +11,11 @@ client.connect();
 
 module.exports = {
     data: new SlashCommandSubcommandBuilder()
-        .setName('history')
-        .setDescription('View your fetched cat pictures')
+        .setName('inventory')
+        .setDescription('View your cat picture inventory')
         .addUserOption(option => 
             option.setName('member')
-                .setDescription('The member whose history you want to view')
+                .setDescription('The member whose inventory you want to view')
                 .setRequired(false)),
     async execute(interaction) {
 

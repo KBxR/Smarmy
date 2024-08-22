@@ -5,11 +5,11 @@ const { getRandomHexColor } = require('@utils');
 
 module.exports = {
     data: new SlashCommandSubcommandBuilder()
-        .setName('info')
-        .setDescription('Get a user\'s cat info.')
+        .setName('profile')
+        .setDescription('Get a user\'s profile.')
         .addUserOption(option =>
             option.setName('member')
-                .setDescription('The user to get cat info for')
+                .setDescription('The user whose profile you want to view.')
                 .setRequired(false)),
 
     async execute(interaction) {
@@ -27,7 +27,7 @@ module.exports = {
             let user = await UserInfo.findByPk(userId);
 
             if (!user.info.dailycat) {
-                return interaction.reply({ content: 'No cat information found for this user.', ephemeral: true });
+                return interaction.reply({ content: 'No profile found for this user.', ephemeral: true });
             }
 
             const dailyCatInfo = user.info.dailycat;
@@ -41,7 +41,7 @@ module.exports = {
 
             const embed = new EmbedBuilder()
                 .setColor(randomColor)
-                .setTitle(`${username}'s Cat Info`)
+                .setTitle(`${username}'s Profile`)
                 .addFields(
                     { name: 'Total Cats', value: `${cats.toString()}`, inline: true },
                     { name: 'Last Cat Date', value: `${lastcat}`, inline: true },
@@ -69,8 +69,8 @@ module.exports = {
 
             return interaction.reply({ embeds: [embed], ephemeral: false });
         } catch (error) {
-            console.error('Error fetching cat info:', error);
-            return interaction.reply({ content: 'An error occurred while fetching your cat info.', ephemeral: true });
+            console.error('Error fetching profile:', error);
+            return interaction.reply({ content: 'An error occurred while fetching your profile.', ephemeral: true });
         }
     }
 };

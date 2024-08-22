@@ -43,7 +43,7 @@ module.exports = {
             const generateEmbed = (index) => {
                 const cat = cats[index];
                 return new EmbedBuilder()
-                    .setTitle('Today\'s Cat Shop')
+                    .setTitle(`${format(new Date(), 'MMMM do, yyyy')} Cat Shop`)
                     .setColor('#FF4500')
                     .setTimestamp()
                     .setImage(cat.picture_url)

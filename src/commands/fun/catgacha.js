@@ -8,8 +8,8 @@ const folderPath = path.join(__dirname, fileName);
 const commandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith('.js'));
 
 const command = new SlashCommandBuilder()
-    .setName('dailycat')
-    .setDescription('Fetch today\'s cat picture');
+    .setName('catgacha')
+    .setDescription('Cat Gacha commands');
 
 for (const file of commandFiles) {
     const commandData = require(path.join(folderPath, file));
@@ -23,7 +23,7 @@ module.exports = {
         const serverConfig = await getServerConfig(serverId);
 
         if (!serverConfig || !serverConfig.dailyCat.enabled) {
-            await interaction.reply({ content: 'Daily cat commands are disabled.', ephemeral: true });
+            await interaction.reply({ content: 'Cat gacha commands are disabled.', ephemeral: true });
             return;
         }
 
