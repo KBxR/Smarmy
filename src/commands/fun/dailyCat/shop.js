@@ -25,11 +25,6 @@ async function refreshCatCache() {
         console.error('Error fetching cats from the database:', error);
     }
 }
-
-// check if there is anything in the cache, if not, fetch new cats
-if (catCache.cats.length === 0){
-    refreshCatCache();
-}
     
 module.exports = {
     data: new SlashCommandSubcommandBuilder()

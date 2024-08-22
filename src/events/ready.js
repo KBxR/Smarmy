@@ -25,6 +25,9 @@ module.exports = {
 
             console.log(`Ready! Logged in as ${client.user.tag}`);
 
+            // fetch initial cat shop
+            refreshCatCache();
+
             cron.schedule('0 0 * * *', () => {
                 sendWOTD(client, '1273979538505859253');
                 console.log('Cheadle Word of the Day scheduled task completed');
