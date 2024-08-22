@@ -45,7 +45,7 @@ module.exports = {
                 .addFields(
                     { name: 'Total Cats', value: `${cats.toString()}`, inline: true },
                     { name: 'Last Cat Date', value: `${lastcat}`, inline: true },
-                    { name: 'Cat Bucks', value: `${catBucks}`, inline: true }
+                    { name: 'Cat Bucks', value: `₡${catBucks}`, inline: true }
                 );
 
             // Check if favorite cat ID is greater than 0 and fetch the favorite cat picture if it exists
