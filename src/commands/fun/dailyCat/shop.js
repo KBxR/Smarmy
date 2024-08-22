@@ -26,6 +26,11 @@ async function refreshCatCache() {
     }
 }
 
+// check if there is anything in the cache, if not, fetch new cats
+if (catCache.cats.length === 0){
+    refreshCatCache();
+}
+    
 module.exports = {
     data: new SlashCommandSubcommandBuilder()
         .setName('shop')
