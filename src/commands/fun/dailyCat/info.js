@@ -14,12 +14,14 @@ module.exports = {
 
     async execute(interaction) {
         let userId = interaction.user.id;
+        const member = interaction.options.getMember('member');
 
         // use the members id if it was provided
         if (interaction.options.getUser('member')) {
             userId = interaction.options.getUser('member').id;
         }
         
+        let username = interaction.user.username;
 
         try {
             let user = await UserInfo.findByPk(userId);
@@ -30,12 +32,16 @@ module.exports = {
 
             const dailyCatInfo = user.info.dailycat;
             const { cats, lastcat, favorite, catBucks } = dailyCatInfo;
+            
+            if(member){
+                username = member.user.username;
+            }
 
             const randomColor = getRandomHexColor();
 
             const embed = new EmbedBuilder()
                 .setColor(randomColor)
-                .setTitle(`${interaction.user.username}'s Cat Info`)
+                .setTitle(`${username}'s Cat Info`)
                 .addFields(
                     { name: 'Total Cats', value: `${cats.toString()}`, inline: true },
                     { name: 'Last Cat Date', value: `${lastcat}`, inline: true },
