@@ -79,4 +79,4 @@ jobs:
 
       - name: Clean up dangling Docker containers
         run: |
-          sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -o StrictHostKeyChecking=no -p ${{ secrets.UNRAID_PORT }} root@${{ secrets.UNRAID_IP }} docker rmi $(docker images -f dangling=true -q)
+          sshpass -p ${{ secrets.UNRAID_PASSWORD }} ssh -o StrictHostKeyChecking=no -p ${{ secrets.UNRAID_PORT }} root@${{ secrets.UNRAID_IP }} docker rmi (docker images -f dangling=true -q)
