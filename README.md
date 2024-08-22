@@ -14,7 +14,7 @@ This Discord bot is a personal project created for experimenting with Discord.js
 - Docker deployable (Need to provide your own docker repo for now)
 
 - Starboard
-- Daily Cat
+- Cat Gacha
 - LastFM API support
 - Phone call command (Limited support)
 
