@@ -9,7 +9,7 @@ const commandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith('.j
 
 const command = new SlashCommandBuilder()
     .setName('catgacha')
-    .setDescription('Cat Gacha commands for the server');
+    .setDescription('Cat Gacha commands');
 
 for (const file of commandFiles) {
     const commandData = require(path.join(folderPath, file));
