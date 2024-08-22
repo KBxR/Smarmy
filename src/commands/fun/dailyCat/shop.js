@@ -26,12 +26,6 @@ async function refreshCatCache() {
     }
 }
 
-// Refresh the cat cache every 24 hours
-setInterval(refreshCatCache, 24 * 60 * 60 * 1000);
-
-// Initial fetch of cats
-refreshCatCache();
-
 module.exports = {
     data: new SlashCommandSubcommandBuilder()
         .setName('shop')
@@ -182,5 +176,6 @@ module.exports = {
             console.error('Error fetching cats from the database:', error);
             await interaction.reply({ content: 'An error occurred while fetching the cat shop.', ephemeral: true });
         }
-    }
+    },
+    refreshCatCache
 };
