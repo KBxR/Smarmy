@@ -30,6 +30,7 @@ module.exports = {
 
             if (lastCatRes.rowCount > 0) {
                 const lastFetchedAt = new Date(lastCatRes.rows[0].fetched_at);
+                const lastPictureUrl = lastCatRes.rows[0].picture_url;
                 const now = new Date();
                 const hoursSinceLastFetch = (now - lastFetchedAt) / (1000 * 60 * 60);
 
