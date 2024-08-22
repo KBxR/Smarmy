@@ -2,7 +2,7 @@ const { ActivityType, Events } = require('discord.js');
 const { getBotInfo } = require('@utils/botInfoUtil');
 const { sendWOTD } = require('@events/cheadlewotd');
 const cron = require('node-cron');
-const { refreshCatCache } = require('@comands/fun/dailyCat/shop');
+const { refreshCatCache } = require('@commands/fun/dailyCat/shop');
 
 module.exports = {
     eventName: 'Ready',
