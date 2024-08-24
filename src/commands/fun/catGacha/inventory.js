@@ -203,8 +203,11 @@ module.exports = {
                         }
                     });
 
-                    confirmationCollector.on('end', async () => {
-                        await i.editReply({content:`Sale timed out.`, components: [], embeds: [] });
+                    // Timeout the confirmation collector if no response is received
+                    confirmationCollector.on('end', async collected => {
+                        if (collected.size === 0) {
+                            await i.editReply({ content: 'Sale cancelled due to inactivity.', components: [], embeds: [] });
+                        }
                     });
                 }, 5000);
             }
