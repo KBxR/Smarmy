@@ -60,25 +60,6 @@ const CatStore = sequelize.define('CatStore', {
     timestamps: false,
 });
 
-const SoldCats = sequelize.define('SoldCats', {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-    },
-    price: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    picture_url: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-    }
-}, {
-    tableName: 'sold_cats',
-    timestamps: false,
-});
-
 const Codes = sequelize.define('Codes', {
     id: {
         type: DataTypes.INTEGER,
@@ -124,4 +105,4 @@ const CodeUsage = sequelize.define('CodeUsage', {
 // Sync all defined models with the database
 sequelize.sync();
 
-module.exports = { BotInfo, CatPicture, sequelize, CatStore, SoldCats, Codes, CodeUsage };
+module.exports = { BotInfo, CatPicture, sequelize, CatStore, Codes, CodeUsage };
