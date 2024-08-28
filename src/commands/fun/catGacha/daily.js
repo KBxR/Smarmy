@@ -21,7 +21,7 @@ module.exports = {
         
         if (userId !== adminId) {
             const lastCatRes = await client.query(`
-                SELECT fetched_at
+                SELECT fetched_at, picture_url
                 FROM cat_pictures
                 WHERE user_id = $1
                 ORDER BY fetched_at DESC
@@ -34,7 +34,7 @@ module.exports = {
                 const now = new Date();
                 const hoursSinceLastFetch = (now - lastFetchedAt) / (1000 * 60 * 60);
 
-                if (hoursSinceLastFetch < 24 && !lastPictureUrl.includes('imgur.com')) {
+                if (hoursSinceLastFetch < 24 && lastPictureUrl && !lastPictureUrl.includes('imgur.com')) {
                     await interaction.reply({ content: 'You can only fetch a new cat picture once every 24 hours.', ephemeral: true });
                     return;
                 }

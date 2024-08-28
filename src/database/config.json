@@ -11,5 +11,8 @@
     },
     "dailyCat": {
         "enabled": true
-    }
+    },
+    "users":[
+
+    ]
 }

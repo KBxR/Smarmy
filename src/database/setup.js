@@ -151,7 +151,7 @@ async function updateUserInfo(userId, userInfo, numberOfCats, mostRecentCatDate)
     await UserInfo.update({ info: updatedInfo }, { where: { user_id: userId } });
 }
 
-async function generateUserInfo(userId) {
+async function generateUserInfo(userId, serverId) {
     try {
         await authenticateDatabase();
         await syncUserInfoTable();
@@ -163,6 +163,15 @@ async function generateUserInfo(userId) {
         if (!userInfo) {
             userInfo = await createUserInfo(userId, numberOfCats, mostRecentCatDate);
             console.log(`User info for user ID ${userId} has been created using the template.`);
+
+            let serverConfig = await ServerConfig.findOne({ where: { server_id: serverId } });
+            if (serverConfig) {
+                serverConfig.users = [...new Set([...serverConfig.users, userId])]; // Ensure no duplicates
+                await serverConfig.save();
+                console.log(`User ID ${userId} has been added to ServerConfig.users array for server ID ${serverId}.`);
+            } else {
+                console.log(`ServerConfig for server ID ${serverId} not found.`);
+            }
         } else if (numberOfCats > 0) {
             await updateUserInfo(userId, userInfo, numberOfCats, mostRecentCatDate);
             console.log(`User info for user ID ${userId} has been updated with the number of cats and the most recent cat date.`);

@@ -8,9 +8,10 @@ module.exports = {
         const userId = interaction.user.id;
 
         let user = await UserInfo.findByPk(userId);
+        const serverId = interaction.guild.id;
         if (!user) {
             // Generate user info if it doesn't exist
-            await generateUserInfo(userId);
+            await generateUserInfo(userId, serverId);
             user = await UserInfo.findByPk(userId);
         }
 
