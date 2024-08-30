@@ -19,9 +19,6 @@ module.exports = {
     async execute(interaction) {
         const userId = interaction.options.getUser('member')?.id || interaction.user.id;
         
-        // Check if the user matches the admin ID and if it does then bypasses the 24 hour cooldown
-        
-        //if (userId !== adminId) {
             const lastCatRes = await client.query(`
                 SELECT fetched_at, picture_url
                 FROM cat_pictures
@@ -41,9 +38,7 @@ module.exports = {
                     return;
                 }
             }
-        //}
         
-
         const pictureUrl = await fetchCatPicture(catKey);
 
         const insertRes = await client.query(`
