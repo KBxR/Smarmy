@@ -21,20 +21,32 @@ module.exports = {
                     { name: 'Global', value: 'global' },
                     { name: 'Server', value: 'server' }
                 )
+        )
+        .addStringOption(option =>
+            option.setName('type')
+                .setDescription('The type of leaderboard')
+                .setRequired(true)
+                .addChoices(
+                    { name: 'Cats', value: 'cats' },
+                    { name: 'Catbucks', value: 'catbucks' }
+                )
         ),
 
     async execute(interaction) {
         const range = interaction.options.getString('range');
+        const type = interaction.options.getString('type');
         let query = '';
         let params = [];
 
+        const column = type === 'cats' ? 'cats' : 'catBucks';
+
         if (range === 'global') {
             query = `
-                SELECT user_id, info->'dailycat'->>'cats' AS cat_count
+                SELECT user_id, info->'dailycat'->>'${column}' AS count
                 FROM user_info
-                ORDER BY (info->'dailycat'->>'cats')::int DESC
+                ORDER BY (info->'dailycat'->>'${column}')::int DESC
                 LIMIT 10
-`;
+            `;
         } else if (range === 'server') {
             const serverId = interaction.guild.id;
             const serverConfigQuery = `
@@ -50,14 +62,14 @@ module.exports = {
             }
 
             query = `
-            SELECT user_id, info->'dailycat'->>'cats' AS cat_count
-            FROM user_info
-            WHERE user_id = ANY($1)
-            ORDER BY (info->'dailycat'->>'cats')::int DESC
-            LIMIT 10
-        `;
-        params = [userIds];
-    }
+                SELECT user_id, info->'dailycat'->>'${column}' AS count
+                FROM user_info
+                WHERE user_id = ANY($1)
+                ORDER BY (info->'dailycat'->>'${column}')::int DESC
+                LIMIT 10
+            `;
+            params = [userIds];
+        }
 
         try {
             const res = await client.query(query, params);
@@ -69,12 +81,18 @@ module.exports = {
 
             const embed = new EmbedBuilder()
                 .setColor(getRandomHexColor())
-                .setTitle(`${range.charAt(0).toUpperCase() + range.slice(1)} Leaderboard`)
+                .setTitle(`${range.charAt(0).toUpperCase() + range.slice(1)} Leaderboard (${type.charAt(0).toUpperCase() + type.slice(1)})`)
                 .setTimestamp();
 
             for (const [index, user] of leaderboard.entries()) {
                 const discordUser = await interaction.client.users.fetch(user.user_id);
-                embed.addFields({ name: `#${index + 1} ${discordUser.username}`, value: `Cats: ${user.cat_count}`, inline: false });
+                let medal = '';
+                if (index === 0) medal = '🥇';
+                else if (index === 1) medal = '🥈';
+                else if (index === 2) medal = '🥉';
+
+                const name = medal ? `${medal} ${discordUser.username}` : `#${index + 1} ${discordUser.username}`;
+                embed.addFields({ name, value: `${type.charAt(0).toUpperCase() + type.slice(1)}: ${user.count}`, inline: false });
             }
 
             await interaction.reply({ embeds: [embed] });

@@ -32,14 +32,22 @@ module.exports = {
         .setDescription('Fetch today\'s cat shop'),
     async execute(interaction) {
         try {
+            const userId = interaction.user.id;
+            const userInfo = await UserInfo.findOne({ where: { user_id: userId } });
+    
+            if (!userInfo) {
+                return interaction.reply({ content: 'User information not found.', ephemeral: true });
+            }
+    
+            const catbucks = userInfo.info.dailycat.catBucks;
             const cats = catCache.cats;
-
+    
             if (cats.length === 0) {
                 return interaction.reply({ content: 'No cats available in the shop.', ephemeral: true });
             }
-
+    
             let currentIndex = 0;
-
+    
             const generateEmbed = (index) => {
                 const cat = cats[index];
                 return new EmbedBuilder()
@@ -51,7 +59,8 @@ module.exports = {
                         name: `Cat Shop ID: ${cat.id}`,
                         value: `Price: ₡${cat.price}`,
                         inline: true
-                    });
+                    })
+                    .setFooter({ text: `You have ${catbucks} Catbucks` });
             };
 
             const row = new ActionRowBuilder()

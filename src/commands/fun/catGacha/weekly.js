@@ -7,55 +7,41 @@ const { format } = require('date-fns');
 
 module.exports = {
     data: new SlashCommandSubcommandBuilder()
-        .setName('gift')
-        .setDescription('Cat gifts')
-        .addStringOption(option =>
-            option.setName('code')
-                .setDescription('The code of the gift')
-                .setRequired(true)),
+        .setName('weekly')
+        .setDescription('Redeem your weekly cat gift'),
     async execute(interaction) {
         const userId = interaction.user.id;
-        const code = interaction.options.getString('code');
+        const code = 'weekly';
 
         try {
             const gift = await Codes.findOne({ where: { code } });
 
             if (!gift) {
-                console.log('Invalid code.');
                 return interaction.reply({ content: 'Invalid code.', ephemeral: true });
             }
 
             const embed = new EmbedBuilder()
-                .setTitle('Code Redeemed')
+                .setTitle('Weekly Cat Redeemed')
                 .setColor(0x00FF00);
 
             const now = new Date();
 
-            if (gift.value.use === 'weekly') {
-                const lastUsed = await CodeUsage.findOne({
-                    where: { user_id: userId, code },
-                    order: [['used_at', 'DESC']]
-                });
+            const lastUsed = await CodeUsage.findOne({
+                where: { user_id: userId, code },
+                order: [['used_at', 'DESC']]
+            });
 
-                if (lastUsed) {
-                    const lastUsedDate = new Date(lastUsed.used_at);
-                    const oneWeekLater = new Date(lastUsedDate);
-                    oneWeekLater.setDate(lastUsedDate.getDate() + 7);
+            if (lastUsed) {
+                const lastUsedDate = new Date(lastUsed.used_at);
+                const oneWeekLater = new Date(lastUsedDate);
+                oneWeekLater.setDate(lastUsedDate.getDate() + 7);
 
-                    if (now < oneWeekLater) {
-                        const formattedNextAvailableDate = format(oneWeekLater, 'MMMM do, yyyy, h:mm a');
-                        return interaction.reply({ content: `You can only use this code once a week. You can use it again on ${formattedNextAvailableDate}.`, ephemeral: true });
-                    }
-                }
-            } else if (gift.value.use === 'once') {
-                const lastUsed = await CodeUsage.findOne({ where: { user_id: userId, code } });
-
-                if (lastUsed) {
-                    return interaction.reply({ content: 'This code can only be used once.', ephemeral: true });
+                if (now < oneWeekLater) {
+                    const formattedNextAvailableDate = format(oneWeekLater, 'MMMM do, yyyy, h:mm a');
+                    return interaction.reply({ content: `You can only use this code once a week. You can use it again on ${formattedNextAvailableDate}.`, ephemeral: true });
                 }
             }
 
-            // Process the gift (e.g., add catbucks, cat picture, etc.)
             if (gift.value.catbucks) {
                 const codeCatBucks = gift.value.catbucks;
                 let userInfo = await UserInfo.findOne({ where: { user_id: userId } });
