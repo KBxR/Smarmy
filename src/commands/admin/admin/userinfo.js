@@ -9,7 +9,6 @@ module.exports.data = new SlashCommandSubcommandBuilder()
             .setDescription('The field to update')
             .setRequired(true)
             .addChoices(
-                { name: 'LastFM.Username', value: 'lastfm.username' },
                 { name: 'DailyCat.Cats', value: 'dailycat.cats' },
                 { name: 'DailyCat.LastCat', value: 'dailycat.lastcat' },
                 { name: 'DailyCat.CatBucks', value: 'dailycat.catBucks' },

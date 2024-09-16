@@ -10,14 +10,10 @@ const config = {
     clientId: process.env.CLIENT_ID,
     guildId: process.env.GUILD_ID,
     adminId: process.env.ADMIN_ID,
-    lastFmKey: process.env.LASTFM_KEY,
-    lastFmSecret: process.env.LASTFM_SECRET,
-    rebrickKey: process.env.REBRICK_KEY,
     pinChannel: process.env.PIN_CHANNEL,
     pinServer: process.env.PIN_SERVER,
     databasePath: process.env.DATABASE_URL,
     catKey: process.env.CAT_KEY,
-    nasaKey: process.env.NASA_KEY,
 };
 
 module.exports = config;
