@@ -1,7 +1,7 @@
 ![smarmy](smarmy.png)
 # Smarmy
 
-This Discord bot is a personal project created for experimenting with Discord.js features and building custom commands for personal use. It\'s not intended for production use but rather as a learning and testing environment.
+Cat Gacha Discord bot made for a private server but can be deployed for other servers
 
 ## Features
 
@@ -10,13 +10,12 @@ This Discord bot is a personal project created for experimenting with Discord.js
 - Server Configurations, managable by one file
 - Auto updating server config + support to force create a config for a server id
 - Command / Event permissions
-- Bot manage commands (Username, avatar, status)
+- Bot management commands (Username, avatar, status)
 - Docker deployable (Need to provide your own docker repo for now)
 
 - Starboard
 - Cat Gacha
-- LastFM API support
-- Phone call command (Limited support)
+- Don Cheadle Word of the Day
 
 ---
 - Commands can be removed by simply removing either the subcommand file, the main command file + the sup commands, or the entire command folder
@@ -42,13 +41,7 @@ DATABASE_URL= postgres://yourusername:yourpassword@databaseip:5432/databasename
 
 #API KEYS
 
-self explanitory, these can be removed if unused
-
-LASTFM_KEY=
-LASTFM_SECRET=
-REBRICK_KEY=
 CAT_KEY=
-NASA_KEY=
 ```
 ## Deployment
 

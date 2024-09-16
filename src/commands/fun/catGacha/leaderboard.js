@@ -44,6 +44,7 @@ module.exports = {
             query = `
                 SELECT user_id, info->'dailycat'->>'${column}' AS count
                 FROM user_info
+                WHERE user_id NOT IN (SELECT user_id FROM blacklist WHERE server_id IS NULL)
                 ORDER BY (info->'dailycat'->>'${column}')::int DESC
                 LIMIT 10
             `;
@@ -65,10 +66,11 @@ module.exports = {
                 SELECT user_id, info->'dailycat'->>'${column}' AS count
                 FROM user_info
                 WHERE user_id = ANY($1)
+                AND user_id NOT IN (SELECT user_id FROM blacklist WHERE server_id = $2)
                 ORDER BY (info->'dailycat'->>'${column}')::int DESC
                 LIMIT 10
             `;
-            params = [userIds];
+            params = [userIds, serverId];
         }
 
         try {
