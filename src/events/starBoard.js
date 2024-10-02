@@ -34,8 +34,6 @@ module.exports = {
     eventName: 'Star Board',
     name: Events.MessageReactionAdd,
     async execute(reaction, user) {
-        console.log('Reaction added:', reaction.emoji.name, 'by user:', user.tag);
-
         const serverId = reaction.message.guild.id;
 
         // Fetch the latest server configuration
