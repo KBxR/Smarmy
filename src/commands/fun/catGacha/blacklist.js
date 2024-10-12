@@ -1,6 +1,7 @@
 const { SlashCommandSubcommandBuilder } = require('discord.js');
 const { Client } = require('pg');
 const { databasePath } = require('@config');
+const { adminId } = require('@config');
 
 const client = new Client({
     connectionString: `${databasePath}`,
@@ -12,7 +13,7 @@ module.exports = {
     data: new SlashCommandSubcommandBuilder()
         .setName('blacklist')
         .setDescription('Blacklist a user from the Catgacha leaderboard')
-        .addStringOption(option =>
+        .addUserOption(option =>
             option.setName('user')
                 .setDescription('The user to blacklist')
                 .setRequired(true)
@@ -28,16 +29,21 @@ module.exports = {
         ),
 
     async execute(interaction) {
-        const user = interaction.options.getString('user');
+        const user = interaction.options.getUser('user');
         const range = interaction.options.getString('range');
         const serverId = range === 'server' ? interaction.guild.id : null;
+
+        if (interaction.user.id !== adminId) {
+            await interaction.reply({ content: 'You do not have permission to run this command.', ephemeral: true });
+            return;
+        }
 
         try {
             await client.query(`
                 INSERT INTO blacklist (server_id, user_id)
                 VALUES ($1, $2)
                 ON CONFLICT DO NOTHING
-            `, [serverId, user]);
+            `, [serverId, user.id]);
 
             await interaction.reply({ content: `${user.username} has been blacklisted from the ${range} leaderboard.`, ephemeral: true });
         } catch (error) {
