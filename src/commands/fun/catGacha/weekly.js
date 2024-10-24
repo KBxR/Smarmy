@@ -35,10 +35,10 @@ module.exports = {
                 const lastUsedDate = new Date(lastUsed.used_at);
                 const oneWeekLater = new Date(lastUsedDate);
                 oneWeekLater.setDate(lastUsedDate.getDate() + 7);
-
+            
                 if (now < oneWeekLater) {
-                    const formattedNextAvailableDate = format(oneWeekLater, 'MMMM do, yyyy, h:mm a');
-                    return interaction.reply({ content: `You can only use this code once a week. You can use it again on ${formattedNextAvailableDate}.`, ephemeral: true });
+                    const oneWeekLaterEpoch = Math.floor(oneWeekLater.getTime() / 1000);
+                    return interaction.reply({ content: `You can only use this code once a week. You can use it again at <t:${oneWeekLaterEpoch}:F>.`, ephemeral: true });
                 }
             }
 

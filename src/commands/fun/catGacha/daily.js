@@ -32,9 +32,11 @@ module.exports = {
                 const lastPictureUrl = lastCatRes.rows[0].picture_url;
                 const now = new Date();
                 const hoursSinceLastFetch = (now - lastFetchedAt) / (1000 * 60 * 60);
-
+                const oneDayLater = new Date(lastFetchedAt.getTime() + 24 * 60 * 60 * 1000);
+                const oneDayLaterEpoch = Math.floor(oneDayLater.getTime() / 1000);
+            
                 if (hoursSinceLastFetch < 24 && lastPictureUrl && !lastPictureUrl.includes('imgur.com')) {
-                    await interaction.reply({ content: 'You can only fetch a new cat picture once every 24 hours.', ephemeral: true });
+                    await interaction.reply({ content: `You can only fetch a new cat picture once every 24 hours. You can get another cat at <t:${oneDayLaterEpoch}:F>`, ephemeral: true });
                     return;
                 }
             }
