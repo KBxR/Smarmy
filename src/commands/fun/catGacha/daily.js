@@ -1,5 +1,5 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require('discord.js');
-const { catKey, databasePath, adminId } = require('@config');
+const { catKey, databasePath } = require('@config');
 const { getRandomHexColor } = require('@utils');
 const { fetchCatPicture } = require('@api/catApi');
 const { Client } = require('pg');
