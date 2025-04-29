@@ -1,8 +1,11 @@
 {
-    "dailycat":{
-        "cats": 0,
-        "lastcat": "none",
-        "favorite": "0",
-        "catBucks": 0
+    "dailycat": {
+      "cats": 146,
+      "tree": {
+      "treeType": "0",
+      "catsOnTree": ["0", "0", "0"]},
+      "lastcat": "none",
+      "catBucks": 0,
+      "favorite": "0"
     }
-}
+  }

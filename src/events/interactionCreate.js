@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
 const { UserInfo, generateUserInfo } = require('@database/setup');
+const { adminId } = require('@config');
 
 module.exports = {
     eventName: 'Interaction Create',
