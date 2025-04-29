@@ -14,6 +14,7 @@ const config = {
     pinServer: process.env.PIN_SERVER,
     databasePath: process.env.DATABASE_URL,
     catKey: process.env.CAT_KEY,
+    imgurKey: process.env.IMGUR_KEY,
 };
 
 module.exports = config;

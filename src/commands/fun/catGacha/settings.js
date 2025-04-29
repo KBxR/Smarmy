@@ -12,6 +12,8 @@ module.exports = {
                 .setRequired(true)
                 .addChoices(
                     { name: 'FavoriteCat', value: 'favorite' },
+                    { name: 'Cat Tree Add', value: 'cattreea' },
+                    { name: 'Cat Tree Remove', value: 'cattreer' }
                 )
         )
         .addStringOption(option =>
@@ -19,40 +21,91 @@ module.exports = {
                 .setDescription('The new value for the settings field')
                 .setRequired(true)
         ),
+
     async execute(interaction) {
         const field = interaction.options.getString('field');
         const value = interaction.options.getString('value');
         const userID = interaction.user.id;
 
-        if (field !== 'favorite') {
-            return interaction.reply({ content: 'Invalid field specified.', ephemeral: true });
-        }
-
         try {
+            switch (field) {
+                case 'favorite': {
+                    const ownedCats = await CatPicture.findAll({ where: { user_id: userID } });
+                    const ownedCatIds = ownedCats.map(cat => cat.id.toString());
 
-            // Check if the user owns the cat
-            const ownedCats = await CatPicture.findAll({ where: { user_id: userID } });
-            const ownedCatIds = ownedCats.map(cat => cat.id.toString());
+                    if (!ownedCatIds.includes(value)) {
+                        return interaction.reply({ content: 'You do not own this cat.', ephemeral: true });
+                    }
 
-            if (!ownedCatIds.includes(value)) {
-                return interaction.reply({ content: 'You do not own this cat.', ephemeral: true });
+                    let userInfo = await UserInfo.findOne({ where: { user_id: userID } });
+                    const updatedInfo = {
+                        ...userInfo.info,
+                        dailycat: {
+                            ...userInfo.info.dailycat,
+                            favorite: value
+                        }
+                    };
+
+                    await UserInfo.update({ info: updatedInfo }, { where: { user_id: userID } });
+                    return interaction.reply({ content: `Your favourite cat has been updated to ${value}.`, ephemeral: true });
+                }
+
+                case 'cattreea': {
+                    const ownedCats = await CatPicture.findAll({ where: { user_id: userID } });
+                    const ownedCatIds = ownedCats.map(cat => cat.id.toString());
+
+                    if (!ownedCatIds.includes(value)) {
+                        return interaction.reply({ content: 'You do not own this cat.', ephemeral: true });
+                    }
+
+                    let userInfo = await UserInfo.findOne({ where: { user_id: userID } });
+
+                    const currentCats = userInfo.info?.tree?.catsOnTree || [];
+
+                    if (currentCats.includes(value)) {
+                        return interaction.reply({ content: 'This cat is already on your tree.', ephemeral: true });
+                    }
+
+                    if (currentCats.length >= 3) {
+                        return interaction.reply({ content: 'You can only have up to 3 cats on your tree.', ephemeral: true });
+                    }
+
+                    const updatedInfo = {
+                        ...userInfo.info,
+                        tree: {
+                            ...userInfo.info.tree,
+                            catsOnTree: [...currentCats, value]
+                        }
+                    };
+
+                    await UserInfo.update({ info: updatedInfo }, { where: { user_id: userID } });
+                    return interaction.reply({ content: `Cat ${value} has been added to your cat tree.`, ephemeral: true });
+                }
+
+                case 'cattreer': {
+                    let userInfo = await UserInfo.findOne({ where: { user_id: userID } });
+
+                    const currentCats = userInfo.info?.tree?.catsOnTree || [];
+                    const updatedCats = currentCats.filter(catId => catId !== value);
+
+                    const updatedInfo = {
+                        ...userInfo.info,
+                        tree: {
+                            ...userInfo.info.tree,
+                            catsOnTree: updatedCats
+                        }
+                    };
+
+                    await UserInfo.update({ info: updatedInfo }, { where: { user_id: userID } });
+                    return interaction.reply({ content: `Cat ${value} has been removed from your cat tree.`, ephemeral: true });
+                }
+
+                default:
+                    return interaction.reply({ content: 'Invalid field specified.', ephemeral: true });
             }
-
-            let userInfo = await UserInfo.findOne({ where: { user_id: userID } });
-            const updatedInfo = { 
-                ...userInfo.info, 
-                dailycat: { 
-                    ...userInfo.info.dailycat, 
-                    favorite: value
-                } 
-            };
-
-            await UserInfo.update({ info: updatedInfo }, { where: { user_id: userID } });
-
-            return interaction.reply({ content: `Your favourite cat has been updated to ${value}.`, ephemeral: true });
         } catch (error) {
-            console.error('Error updating favourite cat:', error);
-            return interaction.reply({ content: 'An error occurred while updating your favourite cat.', ephemeral: true });
+            console.error(`Error handling settings field "${field}":`, error);
+            return interaction.reply({ content: 'An error occurred while updating your settings.', ephemeral: true });
         }
     }
 };
